@@ -1,0 +1,88 @@
+---
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    - cron: "0 12 * * 6" # Every Saturday at 12:00
+  workflow_call:
+
+permissions: read-all
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v5.0.0
+
+      - name: Run megalinter
+        uses: oxsecurity/megalinter/flavors/cupcake@v9.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MEGALINTER_CONFIG: .github/linters/.megalinter.yml
+
+  ci:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v5.0.0
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7.1.1
+
+      - name: Install just
+        shell: bash
+        run: >
+          uv tool install rust-just
+
+      - name: Run quality checks with just
+        run: |
+          just install
+          just check-all
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: htmlcov
+          path: .artifacts/htmlcov
+
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v5.5.1
+        with:
+          fail_ci_if_error: true
+          files: .artifacts/coverage.xml
+          use_oidc: true
+          verbose: true
+
+      - name: Build documentation
+        run: >
+          just build-documentation
+
+      - name: Upload documentation artifacts
+        uses: actions/upload-pages-artifact@v4.0.0
+        with:
+          name: site
+          path: .artifacts/site
+
+      - name: Build package
+        run: >
+          just build-package
+
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: dist
+          path: .artifacts/dist

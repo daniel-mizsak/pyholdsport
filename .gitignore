@@ -1,0 +1,29 @@
+# Project
+
+# System
+.DS_Store
+
+# Python development files
+.artifacts
+.coverage
+.mypy_cache
+.nox
+.pytest_cache
+.ruff_cache
+coverage.xml
+htmlcov
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Environments
+.env
+.venv
+
+# IDE
+.vscode

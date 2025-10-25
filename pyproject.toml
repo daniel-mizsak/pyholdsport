@@ -1,0 +1,32 @@
+# Build System
+[build-system]
+  requires = ["uv_build"]
+  build-backend = "uv_build"
+
+# Project Metadata
+[project]
+  name = "pyholdsport"
+  version = "0.0.1rc1"
+  description = "Unofficial python library for interacting with holdsport."
+  readme = "README.md"
+  license = { file = "LICENSE" }
+  authors = [{ name = "Daniel Mizsak", email = "info@pythonvilag.hu" }]
+  requires-python = ">=3.10"
+  dependencies = ["httpx==0.28.1", "pydantic==2.12.3"]
+
+  [project.urls]
+    Issues = "https://github.com/daniel-mizsak/pyholdsport/issues"
+    Repository = "https://github.com/daniel-mizsak/pyholdsport"
+
+[dependency-groups]
+  dev = ["mypy", "nox", "pre-commit", "pytest", "pytest-cov", "respx", "ruff"]
+  docs = ["mkdocs-material"]
+
+# MyPy
+[tool.mypy]
+  ignore_missing_imports = true
+  pretty = true
+  show_column_numbers = true
+  show_error_context = true
+  strict = true
+  warn_unreachable = true
