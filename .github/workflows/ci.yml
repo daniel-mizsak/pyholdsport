@@ -54,7 +54,7 @@ jobs:
           just check-all
 
       - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v5.0.0
         with:
           name: htmlcov
           path: .artifacts/htmlcov
@@ -82,7 +82,7 @@ jobs:
           just build-package
 
       - name: Upload package artifacts
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v5.0.0
         with:
           name: dist
           path: .artifacts/dist
