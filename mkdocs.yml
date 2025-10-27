@@ -1,0 +1,73 @@
+---
+site_name: pyholdsport
+site_description: Unofficial python library for interacting with holdsport.
+site_url: https://daniel-mizsak.github.io/pyholdsport
+
+repo_name: pyholdsport
+repo_url: https://github.com/daniel-mizsak/pyholdsport
+
+theme:
+  name: material
+  palette:
+    primary: orange
+  logo: assets/logo.png
+  favicon: assets/logo.png
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - navigation.footer
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
+    - search.suggest
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            members_order: source
+            show_if_no_docstring: true
+            show_root_heading: true
+            show_signature_annotations: true
+            show_source: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - tables
+  - toc:
+      permalink: true
+
+extra:
+  generator: false
+
+nav:
+  - Getting started:
+      - index.md
+      - Create instance: create_instance.md
+      - Get teams: get_teams.md
+      - Get members: get_members.md
+      - Get activities: get_activities.md
+      - Get activities users: get_activities_users.md
+      - Get coaches attending activity: get_coaches_attending_activity.md
+  - Reference:
+      - Holdsport: reference/holdsport.md
+      - Models: reference/models.md
