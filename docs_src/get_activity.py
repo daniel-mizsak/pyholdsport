@@ -5,10 +5,11 @@ holdsport = Holdsport(
     holdsport_password="password",
 )
 team_id = 123
+activity_id = 12345
 
-activities: list[HoldsportActivity] = holdsport.get_activities(
+# (1)!
+activity: HoldsportActivity | None = holdsport.get_activity(
     team_id=team_id,
-    per_page=5,
+    activity_id=activity_id,
 )
-for activity in activities:
-    print(activity)
+print(activity)
