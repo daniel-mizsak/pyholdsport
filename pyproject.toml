@@ -6,7 +6,7 @@
 # Project Metadata
 [project]
   name = "pyholdsport"
-  version = "0.0.2"
+  version = "0.0.3"
   description = "Unofficial python library for interacting with holdsport."
   readme = "README.md"
   license = { file = "LICENSE" }
