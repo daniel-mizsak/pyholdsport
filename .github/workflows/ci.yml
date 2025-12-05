@@ -10,6 +10,8 @@ on:
     - cron: "0 12 * * 6" # Every Saturday at 12:00
   workflow_call:
 
+permissions: {}
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -17,6 +19,7 @@ concurrency:
 jobs:
   lint:
     permissions:
+      contents: read
       pull-requests: write
     uses: daniel-mizsak/workflows/.github/workflows/lint.yml@v1
     with:
@@ -24,7 +27,9 @@ jobs:
 
   ci:
     permissions:
-      id-token: write
+      contents: read # checkout
+      actions: write # upload-artifact
+      id-token: write # codecov-action
     uses: daniel-mizsak/workflows/.github/workflows/python-ci.yml@v1
     with:
       python-version: "3.12"
