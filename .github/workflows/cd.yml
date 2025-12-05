@@ -6,12 +6,15 @@ on:
     tags:
       - "*"
 
+permissions: {}
+
 jobs:
   ci:
     uses: ./.github/workflows/ci.yml
     permissions:
-      id-token: write
-      pull-requests: write
+      contents: read # checkout
+      actions: write # upload-artifact
+      id-token: write # codecov-action
 
   github-pages-publish:
     needs: ci
