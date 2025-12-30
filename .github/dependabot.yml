@@ -3,11 +3,11 @@ version: 2
 
 updates:
   - package-ecosystem: "github-actions"
-    directory: /
+    directory: "/"
     schedule:
       interval: "monthly"
 
   - package-ecosystem: "uv"
-    directory: /
+    directory: "/"
     schedule:
       interval: "monthly"

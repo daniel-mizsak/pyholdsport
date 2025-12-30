@@ -6,6 +6,7 @@ clean:
     rm -rf \
         .DS_Store \
         .artifacts \
+        .cache \
         .coverage \
         .mypy_cache \
         .nox \
@@ -62,7 +63,7 @@ check-all: lint type test-all-python coverage
 
 [group("build")]
 build-documentation:
-    uv run mkdocs build --clean --strict --site-dir .artifacts/site
+    uv run zensical build --clean --strict
 
 [group("build")]
 build-package:
