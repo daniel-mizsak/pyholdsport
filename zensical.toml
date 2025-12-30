@@ -1,0 +1,82 @@
+# https://zensical.org/docs/get-started/
+
+[project]
+  site_name = "pyholdsport"
+  site_description = "Unofficial python library for interacting with holdsport."
+  site_author = "Daniel Mizsak"
+  site_url = "https://daniel-mizsak.github.io/pyholdsport"
+  site_dir = ".artifacts/site"
+
+  repo_name = "pyholdsport"
+  repo_url = "https://github.com/daniel-mizsak/pyholdsport"
+
+  nav = [
+    { "Getting started" = [
+      "index.md",
+      { "Create instance" = "create_instance.md" },
+      { "Get teams" = "get_teams.md" },
+      { "Get members" = "get_members.md" },
+      { "Get member" = "get_member.md" },
+      { "Get activities" = "get_activities.md" },
+      { "Get activity" = "get_activity.md" },
+      { "Get activity at a specific date" = "get_activity_at_date.md" },
+      { "Get activities users" = "get_activities_users.md" },
+      { "Get coaches attending activity" = "get_coaches_attending_activity.md" },
+    ] },
+    { "Reference" = [
+      { "Holdsport" = "reference/holdsport.md" },
+      { "Models" = "reference/models.md" },
+    ] },
+  ]
+
+
+  [project.theme]
+    variant = "classic"
+    palette.primary = "orange"
+    logo = "assets/logo.png"
+    favicon = "assets/logo.png"
+    features = [
+      "content.code.annotate",
+      "content.code.copy",
+      "navigation.footer",
+      "navigation.tabs",
+      "navigation.tabs.sticky",
+      "navigation.top",
+      "search.highlight",
+      "search.suggest",
+    ]
+
+  [project.plugins.mkdocstrings.handlers.python]
+    inventories = ["https://docs.python.org/3/objects.inv"]
+    paths = ["src"]
+
+    [project.plugins.mkdocstrings.handlers.python.options]
+      docstring_style = "google"
+      members_order = "source"
+      show_if_no_docstring = true
+      show_root_heading = true
+      show_signature_annotations = true
+      show_source = false
+      show_symbol_type_heading = true
+      show_symbol_type_toc = true
+
+  [project.markdown_extensions.admonition]
+  [project.markdown_extensions.attr_list]
+  [project.markdown_extensions.md_in_html]
+  [project.markdown_extensions.pymdownx.details]
+  [project.markdown_extensions.pymdownx.emoji]
+    emoji_index = "zensical.extensions.emoji.twemoji"
+    emoji_generator = "zensical.extensions.emoji.to_svg"
+  [project.markdown_extensions.pymdownx.highlight]
+    anchor_linenums = true
+    line_spans = "__span"
+    pygments_lang_class = true
+  [project.markdown_extensions.pymdownx.inlinehilite]
+  [project.markdown_extensions.pymdownx.snippets]
+  [project.markdown_extensions.pymdownx.superfences]
+  [project.markdown_extensions.tables]
+  [project.markdown_extensions.toc]
+    permalink = true
+
+  [project.extra]
+    generator = false

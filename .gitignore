@@ -5,6 +5,7 @@
 
 # Python development files
 .artifacts
+.cache
 .coverage
 .mypy_cache
 .nox
