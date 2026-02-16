@@ -4,7 +4,6 @@
 [group("lifecycle")]
 clean:
     rm -rf \
-        .DS_Store \
         .artifacts \
         .cache \
         .coverage \
