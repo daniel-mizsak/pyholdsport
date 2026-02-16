@@ -6,7 +6,7 @@
 # Project Metadata
 [project]
   name = "pyholdsport"
-  version = "0.0.6"
+  version = "0.0.7"
   description = "Unofficial python library for interacting with holdsport."
   readme = "README.md"
   license = { file = "LICENSE" }
@@ -19,14 +19,5 @@
     Repository = "https://github.com/daniel-mizsak/pyholdsport"
 
 [dependency-groups]
-  dev = ["mypy", "nox", "pre-commit", "pytest", "pytest-cov", "respx", "ruff"]
+  dev = ["coverage", "nox", "pre-commit", "pytest", "respx", "ruff", "ty"]
   docs = ["zensical", "mkdocstrings[python]"]
-
-# MyPy
-[tool.mypy]
-  ignore_missing_imports = true
-  pretty = true
-  show_column_numbers = true
-  show_error_context = true
-  strict = true
-  warn_unreachable = true

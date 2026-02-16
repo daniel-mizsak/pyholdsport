@@ -8,22 +8,23 @@ clean:
         .artifacts \
         .cache \
         .coverage \
-        .mypy_cache \
         .nox \
         .pytest_cache \
         .ruff_cache \
         coverage.xml \
         htmlcov \
+        megalinter-reports \
         .venv
+    find . -name ".DS_Store" -type f -delete
     find . -type d -name "__pycache__" -exec rm -r {} +
 
 [group("lifecycle")]
-install:
-    uv sync --all-groups
+install *args:
+    uv sync --all-groups {{ args }}
 
 [group("lifecycle")]
 upgrade:
-    uv sync --upgrade
+    just install --upgrade
 
 [group("lifecycle")]
 fresh: clean install
@@ -35,7 +36,7 @@ lint:
 
 [group("qa")]
 type:
-    uv run mypy .
+    uv run ty check
 
 [group("qa")]
 test *args:
@@ -47,19 +48,24 @@ test-all-python:
 
 [group("qa")]
 coverage:
-    uv run pytest \
-        --cov=tests \
-        --cov-fail-under=100 \
-        --cov-report=term-missing
+    uv run coverage run --source=tests --module pytest
+    uv run coverage report --fail-under=100 --show-missing
 
-    uv run pytest \
-        --cov=pyholdsport \
-        --cov-report=term-missing \
-        --cov-report=xml:.artifacts/coverage.xml \
-        --cov-report=html:.artifacts/htmlcov
+    uv run coverage run --source=pyholdsport --module pytest
+    uv run coverage report --show-missing
+    uv run coverage xml -o .artifacts/coverage.xml
+    uv run coverage html -d .artifacts/htmlcov
 
 [group("qa")]
 check-all: lint type test-all-python coverage
+
+[group("qa-extra")]
+megalinter:
+    npx mega-linter-runner --flavor cupcake --env "MEGALINTER_CONFIG=.github/linters/.megalinter.yml"
+
+[group("qa-extra")]
+pre-commit:
+    uv run pre-commit run --all-files
 
 [group("build")]
 build-documentation:
