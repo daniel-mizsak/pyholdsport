@@ -4,7 +4,7 @@ Holdsport API client.
 Official API documentation:
   - https://github.com/Holdsport/holdsport-api
 
-@author "Daniel Mizsak" <info@pythonvilag.hu>
+@author "Daniel Mizsak" <daniel@mizsak.com>
 """
 
 import os

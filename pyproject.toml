@@ -10,7 +10,7 @@
   description = "Unofficial python library for interacting with holdsport."
   readme = "README.md"
   license = { file = "LICENSE" }
-  authors = [{ name = "Daniel Mizsak", email = "info@pythonvilag.hu" }]
+  authors = [{ name = "Daniel Mizsak", email = "daniel@mizsak.com" }]
   requires-python = ">=3.10"
   dependencies = ["httpx==0.28.1", "pydantic==2.12.5"]
 

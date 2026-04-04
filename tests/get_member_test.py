@@ -1,7 +1,7 @@
 """
 Tests for the get_member method.
 
-@author "Daniel Mizsak" <info@pythonvilag.hu>
+@author "Daniel Mizsak" <daniel@mizsak.com>
 """
 
 import httpx
