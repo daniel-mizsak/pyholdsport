@@ -4,7 +4,7 @@ Models for Holdsport API responses.
 Should be based on Holdsport OpenAPI, but the document was not up-to-date:
   - https://github.com/Holdsport/holdsport-api/blob/master/openapi.yml
 
-@author "Daniel Mizsak" <info@pythonvilag.hu>
+@author "Daniel Mizsak" <daniel@mizsak.com>
 """
 
 from enum import IntEnum

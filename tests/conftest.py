@@ -1,7 +1,7 @@
 """
 Fixtures used in testing the library.
 
-@author "Daniel Mizsak" <info@pythonvilag.hu>
+@author "Daniel Mizsak" <daniel@mizsak.com>
 """
 
 import pytest

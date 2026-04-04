@@ -1,7 +1,7 @@
 """
 Unofficial python library for interacting with holdsport.
 
-@author "Daniel Mizsak" <info@pythonvilag.hu>
+@author "Daniel Mizsak" <daniel@mizsak.com>
 """
 
 from pyholdsport.holdsport import Holdsport

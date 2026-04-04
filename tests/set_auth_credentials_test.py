@@ -1,7 +1,7 @@
 """
 Tests for setting authentication credentials.
 
-@author "Daniel Mizsak" <info@pythonvilag.hu>
+@author "Daniel Mizsak" <daniel@mizsak.com>
 """
 
 import pytest

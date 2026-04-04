@@ -1,7 +1,7 @@
 """
 Tests for the get_teams method.
 
-@author "Daniel Mizsak" <info@pythonvilag.hu>
+@author "Daniel Mizsak" <daniel@mizsak.com>
 """
 
 import httpx
