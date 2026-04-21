@@ -2,7 +2,7 @@
 
 [project]
   site_name = "pyholdsport"
-  site_description = "Unofficial python library for interacting with holdsport."
+  site_description = "Unofficial Python library for interacting with Holdsport."
   site_author = "Daniel Mizsak"
   site_url = "https://daniel-mizsak.github.io/pyholdsport"
   site_dir = ".artifacts/site"
