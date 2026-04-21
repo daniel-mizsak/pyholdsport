@@ -1,5 +1,5 @@
 """
-Unofficial python library for interacting with holdsport.
+Unofficial Python library for interacting with Holdsport.
 
 @author "Daniel Mizsak" <daniel@mizsak.com>
 """
