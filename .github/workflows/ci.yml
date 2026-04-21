@@ -25,7 +25,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: daniel-mizsak/workflows/.github/workflows/lint.yml@v1
+    uses: daniel-mizsak/workflows/.github/workflows/lint.yml@v2
     with:
       megalinter-config: "./.github/linters/.megalinter.yml"
 
@@ -34,7 +34,7 @@ jobs:
       contents: read # checkout
       actions: write # upload-artifact
       id-token: write # codecov-action
-    uses: daniel-mizsak/workflows/.github/workflows/python-ci.yml@v1
+    uses: daniel-mizsak/workflows/.github/workflows/python-ci.yml@v2
     with:
       python-version: "3.12"
       package-version: ${{ inputs.package-version }}
