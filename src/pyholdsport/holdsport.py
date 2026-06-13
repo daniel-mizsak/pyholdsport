@@ -17,7 +17,12 @@ from pyholdsport.models import HoldsportActivitiesUser, HoldsportActivity, Holds
 class Holdsport:
     """Class for interacting with Holdsport."""
 
-    def __init__(self, holdsport_username: str | None = None, holdsport_password: str | None = None) -> None:
+    def __init__(
+        self,
+        holdsport_username: str | None = None,
+        holdsport_password: str | None = None,
+        timeout: float = 30.0,
+    ) -> None:
         """Initialization of the Holdsport object.
 
         Args:
@@ -25,10 +30,12 @@ class Holdsport:
                 HOLDSPORT_USERNAME will be used. If neither are set, an exception will be raised.
             holdsport_password (str | None): The Holdsport login password. If not specified environment variable
                 HOLDSPORT_PASSWORD will be used. If neither are set, an exception will be raised.
+            timeout (float): The timeout in seconds for requests. Defaults to 30.0.
         """
         self.api_base_url = "https://api.holdsport.dk/v1"
         self.auth = self._set_auth_credentials(holdsport_username, holdsport_password)
         self.headers = {"Accept": "application/json"}
+        self.timeout = timeout
 
     def _set_auth_credentials(self, holdsport_username: str | None, holdsport_password: str | None) -> tuple[str, str]:
         holdsport_username = holdsport_username or os.getenv("HOLDSPORT_USERNAME")
@@ -55,7 +62,7 @@ class Holdsport:
             httpx.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams"
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             response = client.get(url, headers=self.headers, auth=self.auth)
             response.raise_for_status()
             response_dict = response.json()
@@ -74,7 +81,7 @@ class Holdsport:
             httpx.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams/{team_id}/members"
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             response = client.get(url, headers=self.headers, auth=self.auth)
             response.raise_for_status()
             response_dict = response.json()
@@ -94,7 +101,7 @@ class Holdsport:
             httpx.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams/{team_id}/members/{member_id}"
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             response = client.get(url, headers=self.headers, auth=self.auth)
             response.raise_for_status()
             response_dict = response.json()
@@ -129,7 +136,7 @@ class Holdsport:
         params: dict[str, int | str] = {"page": page, "per_page": min(per_page, 100)}
         if date:
             params["date"] = date
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             response = client.get(url, headers=self.headers, auth=self.auth, params=params)
             response.raise_for_status()
             response_dict = response.json()
@@ -149,7 +156,7 @@ class Holdsport:
             httpx.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams/{team_id}/activities/{activity_id}"
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             response = client.get(url, headers=self.headers, auth=self.auth)
             response.raise_for_status()
             response_dict = response.json()
@@ -170,7 +177,7 @@ class Holdsport:
             httpx.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/activities/{activity_id}/activities_users"
-        with httpx.Client() as client:
+        with httpx.Client(timeout=self.timeout) as client:
             response = client.get(url, headers=self.headers, auth=self.auth)
             response.raise_for_status()
             response_dict = response.json()

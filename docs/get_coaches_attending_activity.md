@@ -1,6 +1,6 @@
 # Get coaches attending activity
 
-In this complex example, it will be demonstrated how to generate a list of coaches attending a specific activity.
+In this example, it will be demonstrated how to generate a list of coaches attending a specific activity.
 
 The following logical steps are performed:
 

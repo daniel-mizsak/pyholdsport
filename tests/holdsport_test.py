@@ -1,5 +1,5 @@
 """
-Tests for setting authentication credentials.
+Tests for the Holdsport object.
 
 @author "Daniel Mizsak" <daniel@mizsak.com>
 """
@@ -54,3 +54,8 @@ def test_set_auth_credentials__missing_password(monkeypatch: pytest.MonkeyPatch)
         match=r"Holdsport password must be provided either as argument or as environment variable HOLDSPORT_PASSWORD.",
     ):
         Holdsport()
+
+
+def test_holdsport__sets_timeout() -> None:
+    holdsport = Holdsport("argument_username", "argument_password", timeout=60.0)
+    assert holdsport.timeout == 60.0

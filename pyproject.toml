@@ -1,6 +1,6 @@
 # Build System
 [build-system]
-  requires = ["uv_build"]
+  requires = ["uv_build>=0.11.3,<0.12"]
   build-backend = "uv_build"
 
 # Project Metadata
@@ -15,8 +15,9 @@
   dependencies = ["httpx>=0.28.1", "pydantic>=2.12.5"]
 
   [project.urls]
-    Issues = "https://github.com/daniel-mizsak/pyholdsport/issues"
     Repository = "https://github.com/daniel-mizsak/pyholdsport"
+    Documentation = "https://daniel-mizsak.github.io/pyholdsport/"
+    Issues = "https://github.com/daniel-mizsak/pyholdsport/issues"
 
 [dependency-groups]
   dev = [
@@ -34,3 +35,7 @@
 # Uv
 [tool.uv]
   exclude-newer = "1 week"
+
+  [tool.uv.build-backend]
+    module-root = "src"
+    module-name = "pyholdsport"

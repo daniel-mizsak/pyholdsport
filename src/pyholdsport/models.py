@@ -82,6 +82,7 @@ class HoldsportRole(IntEnum):
     ASSISTANT_COACH = 3
     INJURED = 4
     INACTIVE = 5
+    TEAM_LEADER = 6
 
 
 class HoldsportAddress(BaseModel):
