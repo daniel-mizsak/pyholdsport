@@ -46,7 +46,7 @@ def test_get_teams__malformed_response(respx_mock: MockRouter, holdsport: Holdsp
         ("name", "string_type", "Input should be a valid string"),
         ("primary_color", "string_type", "Input should be a valid string"),
         ("secondary_color", "missing", "Field required"),
-        ("role", "enum", "Input should be 1, 2, 3, 4 or 5"),
+        ("role", "enum", "Input should be 1, 2, 3, 4, 5 or 6"),
     }
 
 

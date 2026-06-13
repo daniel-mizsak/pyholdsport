@@ -49,7 +49,7 @@ def test_get_members__malformed_response(respx_mock: MockRouter, team_id: int, h
         ("id", "int_parsing", "Input should be a valid integer, unable to parse string as an integer"),
         ("firstname", "string_type", "Input should be a valid string"),
         ("lastname", "string_type", "Input should be a valid string"),
-        ("role", "enum", "Input should be 1, 2, 3, 4 or 5"),
+        ("role", "enum", "Input should be 1, 2, 3, 4, 5 or 6"),
         ("member_number", "string_type", "Input should be a valid string"),
         ("birthday", "string_type", "Input should be a valid string"),
         ("birthday", "bool_type", "Input should be a valid boolean"),

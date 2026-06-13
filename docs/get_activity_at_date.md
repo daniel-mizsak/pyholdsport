@@ -1,6 +1,6 @@
 # Get an activity at a specific date
 
-In this slightly more complex example, it will be demonstrated how to get an activity occurring at a specific date.
+In this example, it will be demonstrated how to get an activity occurring at a specific date.
 
 The following logical steps are performed:
 

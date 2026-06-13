@@ -22,6 +22,7 @@
       { "Get activity at a specific date" = "get_activity_at_date.md" },
       { "Get activities users" = "get_activities_users.md" },
       { "Get coaches attending activity" = "get_coaches_attending_activity.md" },
+      { "List member attendance" = "list_member_attendance.md" },
     ] },
     { "Reference" = [
       { "Holdsport" = "reference/holdsport.md" },
@@ -40,6 +41,7 @@
       "content.code.copy",
       "navigation.footer",
       "navigation.indexes",
+      "navigation.instant",
       "navigation.tabs",
       "navigation.tabs.sticky",
       "navigation.top",
