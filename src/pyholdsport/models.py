@@ -4,7 +4,7 @@ Models for Holdsport API responses.
 Should be based on Holdsport OpenAPI, but the document was not up-to-date:
   - https://github.com/Holdsport/holdsport-api/blob/master/openapi.yml
 
-@author "Daniel Mizsak" <daniel@mizsak.com>
+Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 """
 
 from enum import IntEnum
@@ -100,8 +100,8 @@ class HoldsportAddress(BaseModel):
     postcode: str = Field(description="Return value is empty for insufficient permissions")
     telephone: str = Field(description="Return value is empty for insufficient permissions")
     mobile: str = Field(description="Return value is empty for insufficient permissions")
-    email: str | None | bool = Field(description="Return value is False for insufficient permissions")
-    email_ex: str | None | bool = Field(description="Return value is False for insufficient permissions")
+    email: str | bool | None = Field(description="Return value is False for insufficient permissions")
+    email_ex: str | bool | None = Field(description="Return value is False for insufficient permissions")
     # parents_name: str | None  # Not added as I do not have access to example response.  # noqa: ERA001
 
 
