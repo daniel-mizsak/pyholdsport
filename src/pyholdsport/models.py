@@ -63,13 +63,20 @@ class HoldsportActivity(BaseModel):
     event_type_id: int
 
 
+class HoldsportActivityUserStatus(IntEnum):
+    """Holdsport activity user attendance status enumeration."""
+
+    ATTENDING = 1
+    NOT_ATTENDING = 2
+
+
 class HoldsportActivitiesUser(BaseModel):
     """Data model for activity user in Holdsport."""
 
     id: int
     name: str
-    status: str  # TODO: Enum?
-    status_code: int
+    status: str
+    status_code: HoldsportActivityUserStatus
     updated_at: str
     user_id: int
 
