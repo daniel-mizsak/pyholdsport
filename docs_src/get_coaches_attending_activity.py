@@ -1,4 +1,11 @@
-from pyholdsport import Holdsport, HoldsportActivitiesUser, HoldsportActivity, HoldsportMember, HoldsportRole
+from pyholdsport import (
+    Holdsport,
+    HoldsportActivitiesUser,
+    HoldsportActivity,
+    HoldsportActivityUserStatus,
+    HoldsportMember,
+    HoldsportRole,
+)
 
 holdsport = Holdsport(
     holdsport_username="username",
@@ -29,7 +36,7 @@ activities_users: list[HoldsportActivitiesUser] = holdsport.get_activities_users
     activity_id,
 )
 for user in activities_users:
-    if user.status == "Attending":
+    if user.status_code is HoldsportActivityUserStatus.ATTENDING:
         # (1)!
         member: HoldsportMember | None = holdsport.get_member(
             team_id=team_id,

@@ -9,7 +9,7 @@ import pytest
 from pydantic import ValidationError
 from respx import MockRouter
 
-from pyholdsport import Holdsport, HoldsportActivitiesUser
+from pyholdsport import Holdsport, HoldsportActivitiesUser, HoldsportActivityUserStatus
 
 
 def test_get_activities_users__invalid_authentication(
@@ -57,7 +57,7 @@ def test_get_activities_users__malformed_response(
         ("id", "int_parsing", "Input should be a valid integer, unable to parse string as an integer"),
         ("name", "string_type", "Input should be a valid string"),
         ("status", "string_type", "Input should be a valid string"),
-        ("status_code", "int_parsing", "Input should be a valid integer, unable to parse string as an integer"),
+        ("status_code", "enum", "Input should be 1 or 2"),
         ("updated_at", "string_type", "Input should be a valid string"),
         ("user_id", "int_parsing", "Input should be a valid integer, unable to parse string as an integer"),
     }
@@ -96,7 +96,7 @@ def test_get_activities_users(
             id=1,
             name="name",
             status="status",
-            status_code=1,
+            status_code=HoldsportActivityUserStatus.ATTENDING,
             updated_at="updated_at",
             user_id=1,
         ),
@@ -104,7 +104,7 @@ def test_get_activities_users(
             id=2,
             name="name",
             status="status",
-            status_code=2,
+            status_code=HoldsportActivityUserStatus.NOT_ATTENDING,
             updated_at="updated_at",
             user_id=2,
         ),

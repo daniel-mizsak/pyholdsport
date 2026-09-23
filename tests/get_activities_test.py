@@ -9,7 +9,7 @@ import pytest
 from pydantic import ValidationError
 from respx import MockRouter
 
-from pyholdsport import Holdsport, HoldsportActivitiesUser, HoldsportActivity
+from pyholdsport import Holdsport, HoldsportActivitiesUser, HoldsportActivity, HoldsportActivityUserStatus
 
 
 def test_get_activities__invalid_authentication(respx_mock: MockRouter, team_id: int, holdsport: Holdsport) -> None:
@@ -129,7 +129,7 @@ def test_get_activities__single_activity(respx_mock: MockRouter, team_id: int, h
                 id=1,
                 name="name",
                 status="status",
-                status_code=1,
+                status_code=HoldsportActivityUserStatus.ATTENDING,
                 updated_at="updated_at",
                 user_id=1,
             ),

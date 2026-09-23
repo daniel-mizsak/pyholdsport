@@ -8,6 +8,7 @@ from pyholdsport.holdsport import Holdsport
 from pyholdsport.models import (
     HoldsportActivitiesUser,
     HoldsportActivity,
+    HoldsportActivityUserStatus,
     HoldsportAddress,
     HoldsportMember,
     HoldsportNote,
@@ -19,6 +20,7 @@ __all__ = [
     "Holdsport",
     "HoldsportActivitiesUser",
     "HoldsportActivity",
+    "HoldsportActivityUserStatus",
     "HoldsportAddress",
     "HoldsportMember",
     "HoldsportNote",

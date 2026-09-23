@@ -1,7 +1,13 @@
 from collections import Counter
 from datetime import date, datetime
 
-from pyholdsport import Holdsport, HoldsportActivitiesUser, HoldsportActivity, HoldsportMember
+from pyholdsport import (
+    Holdsport,
+    HoldsportActivitiesUser,
+    HoldsportActivity,
+    HoldsportActivityUserStatus,
+    HoldsportMember,
+)
 
 holdsport = Holdsport(
     holdsport_username="username",
@@ -41,7 +47,7 @@ while True:
             activity.id,
         )
         for user in activities_users:
-            if user.status == "Attending" and user.user_id in member_ids:
+            if user.status_code is HoldsportActivityUserStatus.ATTENDING and user.user_id in member_ids:
                 attendance_counts[user.user_id] += 1
 
     if reached_future_activity:

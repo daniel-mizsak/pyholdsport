@@ -8,6 +8,8 @@
 
 ::: pyholdsport.HoldsportActivitiesUser
 
+::: pyholdsport.HoldsportActivityUserStatus
+
 ::: pyholdsport.HoldsportRole
 
 ::: pyholdsport.HoldsportAddress
