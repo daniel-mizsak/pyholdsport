@@ -17,7 +17,9 @@ with Holdsport(
         date="2026-03-10",  # (1)!
     )
     for activity in activities:
-        start_time = datetime.strptime(activity.starttime, "%Y-%m-%dT%H:%M:%S%z")
+        start_time = datetime.strptime(
+            activity.starttime, "%Y-%m-%dT%H:%M:%S%z"
+        )
         if start_time.date() == activity_date:
             print(f"Found activity: '{activity.name}'")
             print(f"Activity id: {activity.id}")

@@ -9,7 +9,7 @@ The following logical steps are performed:
 - Since the role of the user is not included under the activity's information, fetch each user's member details to determine their role.
 
 ```py linenums="1"
---8<-- "docs_src/get_coaches_attending_activity.py"
+--8<-- "docs_src/advanced_examples/get_coaches_attending_activity.py"
 ```
 
 1. In practice, if the list of coaches and assistants rarely changes, their member ids could be hard-coded to avoid additional API calls.

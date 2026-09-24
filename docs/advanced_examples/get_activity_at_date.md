@@ -8,7 +8,7 @@ The following logical steps are performed:
 - List all activities while paying attention that the `date` parameter is set to a date **before** the desired date.
 
 ```py linenums="1"
---8<-- "docs_src/get_activity_at_date.py"
+--8<-- "docs_src/advanced_examples/get_activity_at_date.py"
 ```
 
 1. This date should be before the desired date, as the API returns activities starting from the given date.
