@@ -9,12 +9,12 @@ clean:
         .coverage \
         .nox \
         .pytest_cache \
-        .ruff_cache \
         coverage.xml \
         htmlcov \
         megalinter-reports \
         .venv
     find . -type f -name ".DS_Store" -delete
+    find . -type d -name ".ruff_cache" -exec rm -r {} +
     find . -type d -name "__pycache__" -exec rm -r {} +
 
 [group("lifecycle")]

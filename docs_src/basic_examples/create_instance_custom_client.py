@@ -1,5 +1,4 @@
 import httpx
-
 from pyholdsport import Holdsport
 
 with httpx.Client(timeout=60.0) as client:

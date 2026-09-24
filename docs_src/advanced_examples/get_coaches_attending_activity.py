@@ -32,8 +32,10 @@ with Holdsport(
         raise ValueError(msg)
 
     coaches_attending: list[str] = []
-    activities_users: list[HoldsportActivitiesUser] = holdsport.get_activities_users(
-        activity_id,
+    activities_users: list[HoldsportActivitiesUser] = (
+        holdsport.get_activities_users(
+            activity_id,
+        )
     )
     for user in activities_users:
         if user.status_code is HoldsportActivityUserStatus.ATTENDING:
@@ -42,8 +44,13 @@ with Holdsport(
                 team_id=team_id,
                 member_id=user.user_id,
             )
-            if (member is not None) and (member.role in [HoldsportRole.COACH, HoldsportRole.ASSISTANT_COACH]):
-                coaches_attending.append(f"{member.firstname} {member.lastname}")
+            if (member is not None) and (
+                member.role
+                in [HoldsportRole.COACH, HoldsportRole.ASSISTANT_COACH]
+            ):
+                coaches_attending.append(
+                    f"{member.firstname} {member.lastname}"
+                )
 
     print("Coaches attending activity:")
     for coach in coaches_attending:
