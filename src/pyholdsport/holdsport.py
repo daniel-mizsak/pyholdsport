@@ -8,6 +8,7 @@ Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 """
 
 import os
+from typing import Self
 
 import httpx
 
@@ -21,7 +22,9 @@ class Holdsport:
         self,
         holdsport_username: str | None = None,
         holdsport_password: str | None = None,
+        *,
         timeout: float = 30.0,
+        client: httpx.Client | None = None,
     ) -> None:
         """Initialization of the Holdsport object.
 
@@ -30,12 +33,30 @@ class Holdsport:
                 HOLDSPORT_USERNAME will be used. If neither are set, an exception will be raised.
             holdsport_password (str | None): The Holdsport login password. If not specified environment variable
                 HOLDSPORT_PASSWORD will be used. If neither are set, an exception will be raised.
-            timeout (float): The timeout in seconds for requests. Defaults to 30.0.
+            timeout (float): The timeout in seconds for requests. Only used when `client` is not provided.
+                Defaults to 30.0.
+            client (httpx.Client | None): The httpx client to use for requests. If not provided, a client is
+                created using `timeout`. A provided client must be closed by its caller.
         """
         self.api_base_url = "https://api.holdsport.dk/v1"
         self.auth = self._set_auth_credentials(holdsport_username, holdsport_password)
         self.headers = {"Accept": "application/json"}
         self.timeout = timeout
+        self._owns_client = client is None
+        self._client = httpx.Client(timeout=timeout) if client is None else client
+
+    def close(self) -> None:
+        """Close the httpx client if this instance created it, otherwise do nothing."""
+        if self._owns_client:
+            self._client.close()
+
+    def __enter__(self) -> Self:
+        """Enter the context manager."""
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        """Exit the context manager by closing any client owned by this instance."""
+        self.close()
 
     def _set_auth_credentials(self, holdsport_username: str | None, holdsport_password: str | None) -> tuple[str, str]:
         holdsport_username = holdsport_username or os.getenv("HOLDSPORT_USERNAME")
@@ -62,10 +83,9 @@ class Holdsport:
             httpx.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams"
-        with httpx.Client(timeout=self.timeout) as client:
-            response = client.get(url, headers=self.headers, auth=self.auth)
-            response.raise_for_status()
-            response_dict = response.json()
+        response = self._client.get(url, headers=self.headers, auth=self.auth)
+        response.raise_for_status()
+        response_dict = response.json()
         return [HoldsportTeam.model_validate(response_entry) for response_entry in response_dict]
 
     def get_members(self, team_id: int) -> list[HoldsportMember]:
@@ -81,10 +101,9 @@ class Holdsport:
             httpx.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams/{team_id}/members"
-        with httpx.Client(timeout=self.timeout) as client:
-            response = client.get(url, headers=self.headers, auth=self.auth)
-            response.raise_for_status()
-            response_dict = response.json()
+        response = self._client.get(url, headers=self.headers, auth=self.auth)
+        response.raise_for_status()
+        response_dict = response.json()
         return [HoldsportMember.model_validate(response_entry) for response_entry in response_dict]
 
     def get_member(self, team_id: int, member_id: int) -> HoldsportMember | None:
@@ -101,10 +120,9 @@ class Holdsport:
             httpx.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams/{team_id}/members/{member_id}"
-        with httpx.Client(timeout=self.timeout) as client:
-            response = client.get(url, headers=self.headers, auth=self.auth)
-            response.raise_for_status()
-            response_dict = response.json()
+        response = self._client.get(url, headers=self.headers, auth=self.auth)
+        response.raise_for_status()
+        response_dict = response.json()
         if not response_dict:
             return None
         return HoldsportMember.model_validate(response_dict)
@@ -136,10 +154,9 @@ class Holdsport:
         params: dict[str, int | str] = {"page": page, "per_page": min(per_page, 100)}
         if date:
             params["date"] = date
-        with httpx.Client(timeout=self.timeout) as client:
-            response = client.get(url, headers=self.headers, auth=self.auth, params=params)
-            response.raise_for_status()
-            response_dict = response.json()
+        response = self._client.get(url, headers=self.headers, auth=self.auth, params=params)
+        response.raise_for_status()
+        response_dict = response.json()
         return [HoldsportActivity.model_validate(response_entry) for response_entry in response_dict]
 
     def get_activity(self, team_id: int, activity_id: int) -> HoldsportActivity | None:
@@ -156,10 +173,9 @@ class Holdsport:
             httpx.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams/{team_id}/activities/{activity_id}"
-        with httpx.Client(timeout=self.timeout) as client:
-            response = client.get(url, headers=self.headers, auth=self.auth)
-            response.raise_for_status()
-            response_dict = response.json()
+        response = self._client.get(url, headers=self.headers, auth=self.auth)
+        response.raise_for_status()
+        response_dict = response.json()
         if not response_dict:
             return None
         return HoldsportActivity.model_validate(response_dict)
@@ -177,8 +193,7 @@ class Holdsport:
             httpx.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/activities/{activity_id}/activities_users"
-        with httpx.Client(timeout=self.timeout) as client:
-            response = client.get(url, headers=self.headers, auth=self.auth)
-            response.raise_for_status()
-            response_dict = response.json()
+        response = self._client.get(url, headers=self.headers, auth=self.auth)
+        response.raise_for_status()
+        response_dict = response.json()
         return [HoldsportActivitiesUser.model_validate(response_entry) for response_entry in response_dict]

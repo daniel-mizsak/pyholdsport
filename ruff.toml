@@ -4,6 +4,8 @@
 line-length = 120
 indent-width = 4
 
+extend-exclude = ["*.md"] # TODO: https://github.com/astral-sh/ruff/issues/27556
+
 [lint]
   select = ["ALL"]
   ignore = [

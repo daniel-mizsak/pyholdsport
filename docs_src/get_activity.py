@@ -1,15 +1,15 @@
 from pyholdsport import Holdsport, HoldsportActivity
 
-holdsport = Holdsport(
+with Holdsport(
     holdsport_username="username",
     holdsport_password="password",
-)
-team_id = 123
-activity_id = 12345
+) as holdsport:
+    team_id = 123
+    activity_id = 12345
 
-# (1)!
-activity: HoldsportActivity | None = holdsport.get_activity(
-    team_id=team_id,
-    activity_id=activity_id,
-)
-print(activity)
+    # (1)!
+    activity: HoldsportActivity | None = holdsport.get_activity(
+        team_id=team_id,
+        activity_id=activity_id,
+    )
+    print(activity)

@@ -1,3 +1,4 @@
 from pyholdsport import Holdsport
 
-holdsport = Holdsport()
+with Holdsport() as holdsport:
+    holdsport.get_teams()

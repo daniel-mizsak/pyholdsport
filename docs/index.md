@@ -7,3 +7,9 @@ Create and activate a [virtual environment](https://fastapi.tiangolo.com/virtual
 ```bash
 pip install pyholdsport
 ```
+
+Or by using [uv](https://docs.astral.sh/uv/){target}:
+
+```bash
+uv add pyholdsport
+```
