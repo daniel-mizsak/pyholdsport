@@ -12,7 +12,7 @@
   license = { file = "LICENSE" }
   authors = [{ name = "Daniel Mizsak", email = "daniel@mizsak.com" }]
   requires-python = ">=3.11"
-  dependencies = ["httpx>=0.28.1", "pydantic>=2.12.5"]
+  dependencies = ["httpx2>=2.13.0", "pydantic>=2.12.5"]
 
   [project.urls]
     Repository = "https://github.com/daniel-mizsak/pyholdsport"
@@ -25,9 +25,8 @@
     "nox==2026.8.17",
     "prek==0.5.3",
     "pytest==9.1.1",
-    "respx==0.23.1",
     "ruff==0.16.7",
-    "ty==0.0.81",
+    "ty==0.0.82",
   ]
   docs = ["zensical==0.0.62", "mkdocstrings-python==2.0.8"]
 

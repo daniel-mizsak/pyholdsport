@@ -29,6 +29,7 @@ extend-exclude = ["*.md"] # TODO: https://github.com/astral-sh/ruff/issues/27556
       "PLR2004", # magic-value-comparison
       "PT001",   # pytest-fixture-incorrect-parentheses-style
       "S101",    # assert
+      "SLF001",  # private-member-access
     ]
     "docs_src/**" = [
       "CPY001", # missing-copyright-notice
