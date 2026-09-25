@@ -4,7 +4,7 @@ Tests for the Holdsport object.
 Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 """
 
-import httpx
+import httpx2
 import pytest
 
 from pyholdsport.holdsport import Holdsport
@@ -58,50 +58,50 @@ def test_set_auth_credentials__missing_password(monkeypatch: pytest.MonkeyPatch)
 
 
 def test_holdsport__sets_timeout() -> None:
-    with Holdsport("argument_username", "argument_password", timeout=60.0) as holdsport:
+    with Holdsport("username", "password", timeout=60.0) as holdsport:
         assert holdsport.timeout == 60.0
 
 
 def test_holdsport__default_client_created_with_timeout() -> None:
-    holdsport = Holdsport("argument_username", "argument_password", timeout=60.0)
-    assert holdsport._client.timeout == httpx.Timeout(60.0)  # noqa: SLF001
-    assert not holdsport._client.is_closed  # noqa: SLF001
+    holdsport = Holdsport("username", "password", timeout=60.0)
+    assert holdsport._client.timeout == httpx2.Timeout(60.0)
+    assert not holdsport._client.is_closed
     holdsport.close()
-    assert holdsport._client.is_closed  # noqa: SLF001
+    assert holdsport._client.is_closed
 
 
 def test_holdsport__custom_client_used() -> None:
-    with httpx.Client(timeout=10.0) as client:
-        holdsport = Holdsport("argument_username", "argument_password", timeout=60.0, client=client)
-        assert holdsport._client is client  # noqa: SLF001
-        assert client.timeout == httpx.Timeout(10.0)
+    with httpx2.Client(timeout=10.0) as client:
+        holdsport = Holdsport("username", "password", timeout=60.0, client=client)
+        assert holdsport._client is client
+        assert client.timeout == httpx2.Timeout(10.0)
         holdsport.close()
         assert not client.is_closed
     assert client.is_closed
 
 
 def test_holdsport__context_manager_closes_client() -> None:
-    with Holdsport("argument_username", "argument_password") as holdsport:
-        assert not holdsport._client.is_closed  # noqa: SLF001
-    assert holdsport._client.is_closed  # noqa: SLF001
+    with Holdsport("username", "password") as holdsport:
+        assert not holdsport._client.is_closed
+    assert holdsport._client.is_closed
 
 
 def test_holdsport__context_manager_closes_client_on_exception() -> None:
-    holdsport = Holdsport("argument_username", "argument_password")
+    holdsport = Holdsport("username", "password")
     msg = "context body failed"
     with pytest.raises(ValueError, match="context body failed"), holdsport:
         raise ValueError(msg)
-    assert holdsport._client.is_closed  # noqa: SLF001
+    assert holdsport._client.is_closed
 
 
 def test_holdsport__shared_client_remains_usable() -> None:
-    requests: list[httpx.Request] = []
+    requests: list[httpx2.Request] = []
 
-    def handle_request(request: httpx.Request) -> httpx.Response:
+    def handle_request(request: httpx2.Request) -> httpx2.Response:
         requests.append(request)
-        return httpx.Response(200, json=[])
+        return httpx2.Response(200, json=[])
 
-    with httpx.Client(transport=httpx.MockTransport(handle_request)) as client:
+    with httpx2.Client(transport=httpx2.MockTransport(handle_request)) as client:
         with Holdsport("username", "password", client=client) as first:
             assert first.get_teams() == []
             assert first.get_members(123) == []

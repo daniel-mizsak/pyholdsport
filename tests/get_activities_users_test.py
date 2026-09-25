@@ -4,34 +4,38 @@ Tests for the get_activities_users method.
 Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 """
 
-import httpx
+import httpx2
 import pytest
 from pydantic import ValidationError
-from respx import MockRouter
 
 from pyholdsport import Holdsport, HoldsportActivitiesUser, HoldsportActivityUserStatus
+from tests.http_mock import HTTPMock
 
 
 def test_get_activities_users__invalid_authentication(
-    respx_mock: MockRouter,
+    http_mock: HTTPMock,
     activity_id: int,
     holdsport: Holdsport,
 ) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/activities/{activity_id}/activities_users").mock(
-        return_value=httpx.Response(status_code=401),
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/activities/{activity_id}/activities_users",
+        response=httpx2.Response(status_code=401),
     )
 
-    with pytest.raises(httpx.HTTPStatusError):
+    with pytest.raises(httpx2.HTTPStatusError):
         holdsport.get_activities_users(activity_id=activity_id)
 
 
 def test_get_activities_users__malformed_response(
-    respx_mock: MockRouter,
+    http_mock: HTTPMock,
     activity_id: int,
     holdsport: Holdsport,
 ) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/activities/{activity_id}/activities_users").mock(
-        return_value=httpx.Response(
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/activities/{activity_id}/activities_users",
+        response=httpx2.Response(
             status_code=200,
             json=[
                 {
@@ -64,12 +68,14 @@ def test_get_activities_users__malformed_response(
 
 
 def test_get_activities_users(
-    respx_mock: MockRouter,
+    http_mock: HTTPMock,
     activity_id: int,
     holdsport: Holdsport,
 ) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/activities/{activity_id}/activities_users").mock(
-        return_value=httpx.Response(
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/activities/{activity_id}/activities_users",
+        response=httpx2.Response(
             status_code=200,
             json=[
                 {

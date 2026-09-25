@@ -10,7 +10,7 @@ Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 import os
 from typing import Self
 
-import httpx
+import httpx2
 
 from pyholdsport.models import HoldsportActivitiesUser, HoldsportActivity, HoldsportMember, HoldsportTeam
 
@@ -24,7 +24,7 @@ class Holdsport:
         holdsport_password: str | None = None,
         *,
         timeout: float = 30.0,
-        client: httpx.Client | None = None,
+        client: httpx2.Client | None = None,
     ) -> None:
         """Initialization of the Holdsport object.
 
@@ -35,7 +35,7 @@ class Holdsport:
                 HOLDSPORT_PASSWORD will be used. If neither are set, an exception will be raised.
             timeout (float): The timeout in seconds for requests. Only used when `client` is not provided.
                 Defaults to 30.0.
-            client (httpx.Client | None): The httpx client to use for requests. If not provided, a client is
+            client (httpx2.Client | None): The httpx2 client to use for requests. If not provided, a client is
                 created using `timeout`. A provided client must be closed by its caller.
         """
         self.api_base_url = "https://api.holdsport.dk/v1"
@@ -43,10 +43,10 @@ class Holdsport:
         self.headers = {"Accept": "application/json"}
         self.timeout = timeout
         self._owns_client = client is None
-        self._client = httpx.Client(timeout=timeout) if client is None else client
+        self._client = httpx2.Client(timeout=timeout) if client is None else client
 
     def close(self) -> None:
-        """Close the httpx client if this instance created it, otherwise do nothing."""
+        """Close the httpx2 client if this instance created it, otherwise do nothing."""
         if self._owns_client:
             self._client.close()
 
@@ -80,7 +80,7 @@ class Holdsport:
             list[HoldsportTeam]: List of teams the user is member of.
 
         Raises:
-            httpx.HTTPStatusError: If the request fails.
+            httpx2.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams"
         response = self._client.get(url, headers=self.headers, auth=self.auth)
@@ -98,7 +98,7 @@ class Holdsport:
             list[HoldsportMember]: List of members in the requested team.
 
         Raises:
-            httpx.HTTPStatusError: If the request fails.
+            httpx2.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams/{team_id}/members"
         response = self._client.get(url, headers=self.headers, auth=self.auth)
@@ -117,7 +117,7 @@ class Holdsport:
             HoldsportMember | None: The requested member, or None if the member is not found.
 
         Raises:
-            httpx.HTTPStatusError: If the request fails.
+            httpx2.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams/{team_id}/members/{member_id}"
         response = self._client.get(url, headers=self.headers, auth=self.auth)
@@ -148,7 +148,7 @@ class Holdsport:
             list[HoldsportActivity]: List of activities in the requested team.
 
         Raises:
-            httpx.HTTPStatusError: If the request fails.
+            httpx2.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams/{team_id}/activities"
         params: dict[str, int | str] = {"page": page, "per_page": min(per_page, 100)}
@@ -170,7 +170,7 @@ class Holdsport:
             HoldsportActivity | None: The requested activity, or None if the activity is not found.
 
         Raises:
-            httpx.HTTPStatusError: If the request fails.
+            httpx2.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams/{team_id}/activities/{activity_id}"
         response = self._client.get(url, headers=self.headers, auth=self.auth)
@@ -190,7 +190,7 @@ class Holdsport:
             list[HoldsportActivitiesUser]: List of users in the requested activity.
 
         Raises:
-            httpx.HTTPStatusError: If the request fails.
+            httpx2.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/activities/{activity_id}/activities_users"
         response = self._client.get(url, headers=self.headers, auth=self.auth)

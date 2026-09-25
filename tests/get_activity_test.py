@@ -4,36 +4,40 @@ Tests for the get_activity method.
 Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 """
 
-import httpx
+import httpx2
 import pytest
 from pydantic import ValidationError
-from respx import MockRouter
 
 from pyholdsport import Holdsport, HoldsportActivitiesUser, HoldsportActivity, HoldsportActivityUserStatus
+from tests.http_mock import HTTPMock
 
 
 def test_get_activity__invalid_authentication(
-    respx_mock: MockRouter,
+    http_mock: HTTPMock,
     team_id: int,
     activity_id: int,
     holdsport: Holdsport,
 ) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}").mock(
-        return_value=httpx.Response(status_code=401),
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}",
+        response=httpx2.Response(status_code=401),
     )
 
-    with pytest.raises(httpx.HTTPStatusError):
+    with pytest.raises(httpx2.HTTPStatusError):
         holdsport.get_activity(team_id=team_id, activity_id=activity_id)
 
 
 def test_get_activity__malformed_response(
-    respx_mock: MockRouter,
+    http_mock: HTTPMock,
     team_id: int,
     activity_id: int,
     holdsport: Holdsport,
 ) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}").mock(
-        return_value=httpx.Response(
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}",
+        response=httpx2.Response(
             status_code=200,
             json={
                 "id": "string",
@@ -78,13 +82,15 @@ def test_get_activity__malformed_response(
 
 
 def test_get_activity__no_activity(
-    respx_mock: MockRouter,
+    http_mock: HTTPMock,
     team_id: int,
     activity_id: int,
     holdsport: Holdsport,
 ) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}").mock(
-        return_value=httpx.Response(
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}",
+        response=httpx2.Response(
             status_code=200,
             json={},
         ),
@@ -95,13 +101,15 @@ def test_get_activity__no_activity(
 
 
 def test_get_activity__single_activity(
-    respx_mock: MockRouter,
+    http_mock: HTTPMock,
     team_id: int,
     activity_id: int,
     holdsport: Holdsport,
 ) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}").mock(
-        return_value=httpx.Response(
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}",
+        response=httpx2.Response(
             status_code=200,
             json={
                 "id": 1,

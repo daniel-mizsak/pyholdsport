@@ -23,7 +23,7 @@ It is also possible to provide one value as an input argument and the other as a
 
 ## Using a custom client
 
-For advanced use cases, pass an existing `httpx.Client`:
+For advanced use cases, pass an existing `httpx2.Client`:
 
 ```py linenums="1"
 --8<-- "docs_src/basic_examples/create_instance_custom_client.py"
