@@ -1,27 +1,29 @@
 """
 Tests for the get_teams method.
 
-@author "Daniel Mizsak" <daniel@mizsak.com>
+Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 """
 
-import httpx
+import httpx2
 import pytest
 from pydantic import ValidationError
-from respx import MockRouter
 
 from pyholdsport import Holdsport, HoldsportRole, HoldsportTeam
+from tests.http_mock import HTTPMock
 
 
-def test_get_teams__invalid_authentication(respx_mock: MockRouter, holdsport: Holdsport) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams").mock(return_value=httpx.Response(status_code=401))
+def test_get_teams__invalid_authentication(http_mock: HTTPMock, holdsport: Holdsport) -> None:
+    http_mock.expect("GET", f"{holdsport.api_base_url}/teams", response=httpx2.Response(status_code=401))
 
-    with pytest.raises(httpx.HTTPStatusError):
+    with pytest.raises(httpx2.HTTPStatusError):
         holdsport.get_teams()
 
 
-def test_get_teams__malformed_response(respx_mock: MockRouter, holdsport: Holdsport) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams").mock(
-        return_value=httpx.Response(
+def test_get_teams__malformed_response(http_mock: HTTPMock, holdsport: Holdsport) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams",
+        response=httpx2.Response(
             status_code=200,
             json=[
                 {
@@ -50,9 +52,11 @@ def test_get_teams__malformed_response(respx_mock: MockRouter, holdsport: Holdsp
     }
 
 
-def test_get_teams__no_teams(respx_mock: MockRouter, holdsport: Holdsport) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams").mock(
-        return_value=httpx.Response(
+def test_get_teams__no_teams(http_mock: HTTPMock, holdsport: Holdsport) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams",
+        response=httpx2.Response(
             status_code=200,
             json=[],
         ),
@@ -62,9 +66,11 @@ def test_get_teams__no_teams(respx_mock: MockRouter, holdsport: Holdsport) -> No
     assert teams == []
 
 
-def test_get_teams__single_team(respx_mock: MockRouter, holdsport: Holdsport) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams").mock(
-        return_value=httpx.Response(
+def test_get_teams__single_team(http_mock: HTTPMock, holdsport: Holdsport) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams",
+        response=httpx2.Response(
             status_code=200,
             json=[
                 {
@@ -89,9 +95,11 @@ def test_get_teams__single_team(respx_mock: MockRouter, holdsport: Holdsport) ->
     assert teams == [expected_team]
 
 
-def test_get_teams__multiple_teams(respx_mock: MockRouter, holdsport: Holdsport) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams").mock(
-        return_value=httpx.Response(
+def test_get_teams__multiple_teams(http_mock: HTTPMock, holdsport: Holdsport) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams",
+        response=httpx2.Response(
             status_code=200,
             json=[
                 {

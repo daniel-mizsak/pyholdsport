@@ -4,7 +4,7 @@ Models for Holdsport API responses.
 Should be based on Holdsport OpenAPI, but the document was not up-to-date:
   - https://github.com/Holdsport/holdsport-api/blob/master/openapi.yml
 
-@author "Daniel Mizsak" <daniel@mizsak.com>
+Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 """
 
 from enum import IntEnum
@@ -48,13 +48,15 @@ class HoldsportActivity(BaseModel):
     comment: str
     place: str
     pickup_place: str
-    pickup_time: str
+    pickup_time: str = Field(description="Pickup time in HH:MM format, or an empty string if not set")
     status: int
     registration_type: int
     # actions: list  # noqa: ERA001
     # action_path: str  # noqa: ERA001
     # action_method: str  # noqa: ERA001
-    activities_users: list["HoldsportActivitiesUser"]
+    activities_users: list["HoldsportActivitiesUser"] = Field(
+        description="Activity users, including entries with Unknown status; not necessarily a complete team roster"
+    )
     # ride: bool  # noqa: ERA001
     # ride_comment: str  # noqa: ERA001
     # rides: list  # noqa: ERA001
@@ -63,13 +65,23 @@ class HoldsportActivity(BaseModel):
     event_type_id: int
 
 
+class HoldsportActivityUserStatus(IntEnum):
+    """Holdsport activity user attendance status enumeration."""
+
+    ATTENDING = 1
+    NOT_ATTENDING = 2
+    AVAILABLE = 3
+    SELECTED = 4
+    UNKNOWN = 5
+
+
 class HoldsportActivitiesUser(BaseModel):
     """Data model for activity user in Holdsport."""
 
     id: int
     name: str
-    status: str  # TODO: Enum?
-    status_code: int
+    status: str
+    status_code: HoldsportActivityUserStatus
     updated_at: str
     user_id: int
 
@@ -93,8 +105,8 @@ class HoldsportAddress(BaseModel):
     postcode: str = Field(description="Return value is empty for insufficient permissions")
     telephone: str = Field(description="Return value is empty for insufficient permissions")
     mobile: str = Field(description="Return value is empty for insufficient permissions")
-    email: str | None | bool = Field(description="Return value is False for insufficient permissions")
-    email_ex: str | None | bool = Field(description="Return value is False for insufficient permissions")
+    email: str | bool | None = Field(description="Return value is False for insufficient permissions")
+    email_ex: str | bool | None = Field(description="Return value is False for insufficient permissions")
     # parents_name: str | None  # Not added as I do not have access to example response.  # noqa: ERA001
 
 
@@ -103,6 +115,6 @@ class HoldsportNote(BaseModel):
 
     # attachment_path: str  # noqa: ERA001
     body: str
-    create_at: str
+    created_at: str
     created_by: str
     title: str

@@ -1,29 +1,33 @@
 """
 Tests for the get_activities method.
 
-@author "Daniel Mizsak" <daniel@mizsak.com>
+Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 """
 
-import httpx
+import httpx2
 import pytest
 from pydantic import ValidationError
-from respx import MockRouter
 
-from pyholdsport import Holdsport, HoldsportActivitiesUser, HoldsportActivity
+from pyholdsport import Holdsport, HoldsportActivitiesUser, HoldsportActivity, HoldsportActivityUserStatus
+from tests.http_mock import HTTPMock
 
 
-def test_get_activities__invalid_authentication(respx_mock: MockRouter, team_id: int, holdsport: Holdsport) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/activities").mock(
-        return_value=httpx.Response(status_code=401),
+def test_get_activities__invalid_authentication(http_mock: HTTPMock, team_id: int, holdsport: Holdsport) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/activities?page=1&per_page=20",
+        response=httpx2.Response(status_code=401),
     )
 
-    with pytest.raises(httpx.HTTPStatusError):
+    with pytest.raises(httpx2.HTTPStatusError):
         holdsport.get_activities(team_id=team_id)
 
 
-def test_get_activities__malformed_response(respx_mock: MockRouter, team_id: int, holdsport: Holdsport) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/activities").mock(
-        return_value=httpx.Response(
+def test_get_activities__malformed_response(http_mock: HTTPMock, team_id: int, holdsport: Holdsport) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/activities?page=1&per_page=20",
+        response=httpx2.Response(
             status_code=200,
             json=[
                 {
@@ -69,9 +73,11 @@ def test_get_activities__malformed_response(respx_mock: MockRouter, team_id: int
     }
 
 
-def test_get_activities__no_activities(respx_mock: MockRouter, team_id: int, holdsport: Holdsport) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/activities").mock(
-        return_value=httpx.Response(
+def test_get_activities__no_activities(http_mock: HTTPMock, team_id: int, holdsport: Holdsport) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/activities?page=1&per_page=20",
+        response=httpx2.Response(
             status_code=200,
             json=[],
         ),
@@ -81,9 +87,15 @@ def test_get_activities__no_activities(respx_mock: MockRouter, team_id: int, hol
     assert activities == []
 
 
-def test_get_activities__single_activity(respx_mock: MockRouter, team_id: int, holdsport: Holdsport) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/activities").mock(
-        return_value=httpx.Response(
+def test_get_activities__single_activity(
+    http_mock: HTTPMock,
+    team_id: int,
+    holdsport: Holdsport,
+) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/activities?page=1&per_page=20",
+        response=httpx2.Response(
             status_code=200,
             json=[
                 {
@@ -94,7 +106,7 @@ def test_get_activities__single_activity(respx_mock: MockRouter, team_id: int, h
                     "comment": "comment",
                     "place": "place",
                     "pickup_place": "pickup_place",
-                    "pickup_time": "pickup_time",
+                    "pickup_time": "",
                     "status": 1,
                     "registration_type": 1,
                     "activities_users": [
@@ -121,7 +133,7 @@ def test_get_activities__single_activity(respx_mock: MockRouter, team_id: int, h
         comment="comment",
         place="place",
         pickup_place="pickup_place",
-        pickup_time="pickup_time",
+        pickup_time="",
         status=1,
         registration_type=1,
         activities_users=[
@@ -129,7 +141,7 @@ def test_get_activities__single_activity(respx_mock: MockRouter, team_id: int, h
                 id=1,
                 name="name",
                 status="status",
-                status_code=1,
+                status_code=HoldsportActivityUserStatus.ATTENDING,
                 updated_at="updated_at",
                 user_id=1,
             ),
@@ -142,13 +154,62 @@ def test_get_activities__single_activity(respx_mock: MockRouter, team_id: int, h
     assert activities == [expected_activity]
 
 
-def test_get_activities__query_parameters(respx_mock: MockRouter, team_id: int, holdsport: Holdsport) -> None:
-    route = respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/activities").mock(
-        return_value=httpx.Response(status_code=200, json=[]),
+def test_get_activities__nested_unknown_attendance_status(
+    http_mock: HTTPMock,
+    team_id: int,
+    holdsport: Holdsport,
+) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/activities?page=1&per_page=20",
+        response=httpx2.Response(
+            status_code=200,
+            json=[
+                {
+                    "id": 1,
+                    "name": "name",
+                    "starttime": "starttime",
+                    "endtime": "endtime",
+                    "comment": "comment",
+                    "place": "place",
+                    "pickup_place": "pickup_place",
+                    "pickup_time": "",
+                    "status": 1,
+                    "registration_type": 1,
+                    "activities_users": [
+                        {
+                            "id": 1,
+                            "name": "name",
+                            "status": "Unknown",
+                            "status_code": 5,
+                            "updated_at": "updated_at",
+                            "user_id": 1,
+                        },
+                    ],
+                    "event_type": "event_type",
+                    "event_type_id": 1,
+                },
+            ],
+        ),
+    )
+
+    activities = holdsport.get_activities(team_id=team_id)
+    assert len(activities) == 1
+    users = activities[0].activities_users
+    assert len(users) == 1
+    assert users[0].status_code is HoldsportActivityUserStatus.UNKNOWN
+    assert users[0].status == "Unknown"
+
+
+def test_get_activities__query_parameters(http_mock: HTTPMock, team_id: int, holdsport: Holdsport) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/activities?page=3&per_page=100&date=2026-01-01",
+        response=httpx2.Response(status_code=200, json=[]),
     )
 
     holdsport.get_activities(team_id=team_id, page=3, per_page=120, date="2026-01-01")
-    request = route.calls.last.request
+    request = http_mock.requests[-1]
     assert request.url.params["page"] == "3"
     assert request.url.params["per_page"] == "100"
     assert request.url.params["date"] == "2026-01-01"

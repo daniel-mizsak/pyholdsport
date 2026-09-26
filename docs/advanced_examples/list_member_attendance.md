@@ -10,5 +10,5 @@ The following logical steps are performed:
 - Print each member with their attendance count.
 
 ```py linenums="1"
---8<-- "docs_src/list_member_attendance.py"
+--8<-- "docs_src/advanced_examples/list_member_attendance.py"
 ```

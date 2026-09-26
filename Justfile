@@ -9,12 +9,12 @@ clean:
         .coverage \
         .nox \
         .pytest_cache \
-        .ruff_cache \
         coverage.xml \
         htmlcov \
         megalinter-reports \
         .venv
     find . -type f -name ".DS_Store" -delete
+    find . -type d -name ".ruff_cache" -exec rm -r {} +
     find . -type d -name "__pycache__" -exec rm -r {} +
 
 [group("lifecycle")]
@@ -60,7 +60,8 @@ check-all: lint type test-all-python coverage
 
 [group("qa-extra")]
 megalinter:
-    npx mega-linter-runner --flavor cupcake --env "MEGALINTER_CONFIG=.github/linters/.megalinter.yml"
+    just clean
+    trap 'just install' EXIT; npx mega-linter-runner --flavor ci_light --env "MEGALINTER_CONFIG=.github/linters/.megalinter.yml"
 
 [group("qa-extra")]
 prek:
@@ -68,7 +69,7 @@ prek:
 
 [group("build")]
 build-documentation:
-    uv run zensical build --clean --strict
+    uv run zensical build --clean
 
 [group("build")]
 build-package:

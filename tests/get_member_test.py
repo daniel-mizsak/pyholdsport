@@ -1,39 +1,43 @@
 """
 Tests for the get_member method.
 
-@author "Daniel Mizsak" <daniel@mizsak.com>
+Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 """
 
-import httpx
+import httpx2
 import pytest
 from pydantic import ValidationError
-from respx import MockRouter
 
 from pyholdsport import Holdsport, HoldsportAddress, HoldsportMember, HoldsportRole
+from tests.http_mock import HTTPMock
 
 
 def test_get_member__invalid_authentication(
-    respx_mock: MockRouter,
+    http_mock: HTTPMock,
     team_id: int,
     member_id: int,
     holdsport: Holdsport,
 ) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/members/{member_id}").mock(
-        return_value=httpx.Response(status_code=401),
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/members/{member_id}",
+        response=httpx2.Response(status_code=401),
     )
 
-    with pytest.raises(httpx.HTTPStatusError):
+    with pytest.raises(httpx2.HTTPStatusError):
         holdsport.get_member(team_id=team_id, member_id=member_id)
 
 
 def test_get_member__malformed_response(
-    respx_mock: MockRouter,
+    http_mock: HTTPMock,
     team_id: int,
     member_id: int,
     holdsport: Holdsport,
 ) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/members/{member_id}").mock(
-        return_value=httpx.Response(
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/members/{member_id}",
+        response=httpx2.Response(
             status_code=200,
             json={
                 "id": "not-an-integer",
@@ -68,9 +72,11 @@ def test_get_member__malformed_response(
     }
 
 
-def test_get_member__no_member(respx_mock: MockRouter, team_id: int, member_id: int, holdsport: Holdsport) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/members/{member_id}").mock(
-        return_value=httpx.Response(
+def test_get_member__no_member(http_mock: HTTPMock, team_id: int, member_id: int, holdsport: Holdsport) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/members/{member_id}",
+        response=httpx2.Response(
             status_code=200,
             json={},
         ),
@@ -81,13 +87,15 @@ def test_get_member__no_member(respx_mock: MockRouter, team_id: int, member_id: 
 
 
 def test_get_member__insufficient_permissions(
-    respx_mock: MockRouter,
+    http_mock: HTTPMock,
     team_id: int,
     member_id: int,
     holdsport: Holdsport,
 ) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/members/{member_id}").mock(
-        return_value=httpx.Response(
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/members/{member_id}",
+        response=httpx2.Response(
             status_code=200,
             json={
                 "id": member_id,
@@ -129,13 +137,15 @@ def test_get_member__insufficient_permissions(
 
 
 def test_get_member__sufficient_permissions(
-    respx_mock: MockRouter,
+    http_mock: HTTPMock,
     team_id: int,
     member_id: int,
     holdsport: Holdsport,
 ) -> None:
-    respx_mock.get(f"{holdsport.api_base_url}/teams/{team_id}/members/{member_id}").mock(
-        return_value=httpx.Response(
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/members/{member_id}",
+        response=httpx2.Response(
             status_code=200,
             json={
                 "id": member_id,

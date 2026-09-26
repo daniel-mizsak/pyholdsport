@@ -1,13 +1,14 @@
 """
 Unofficial Python library for interacting with Holdsport.
 
-@author "Daniel Mizsak" <daniel@mizsak.com>
+Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 """
 
 from pyholdsport.holdsport import Holdsport
 from pyholdsport.models import (
     HoldsportActivitiesUser,
     HoldsportActivity,
+    HoldsportActivityUserStatus,
     HoldsportAddress,
     HoldsportMember,
     HoldsportNote,
@@ -19,6 +20,7 @@ __all__ = [
     "Holdsport",
     "HoldsportActivitiesUser",
     "HoldsportActivity",
+    "HoldsportActivityUserStatus",
     "HoldsportAddress",
     "HoldsportMember",
     "HoldsportNote",

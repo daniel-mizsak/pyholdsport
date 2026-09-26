@@ -1,12 +1,12 @@
 """
 Nox configuration file for testing against multiple python versions.
 
-@author "Daniel Mizsak" <daniel@mizsak.com>
+Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 """
 
 import nox
 
-python_versions = ["3.10", "3.11", "3.12", "3.13", "3.14"]
+python_versions = ["3.11", "3.12", "3.13", "3.14"]
 
 
 @nox.session(python=python_versions, venv_backend="uv")
