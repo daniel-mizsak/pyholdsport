@@ -24,6 +24,7 @@ repos:
 
       - id: check-docstring-first
       - id: name-tests-test
+        exclude: ^tests/http_mock\.py$
 
   # actionlint
   - repo: https://github.com/rhysd/actionlint
