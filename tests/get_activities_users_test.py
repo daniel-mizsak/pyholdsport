@@ -61,7 +61,7 @@ def test_get_activities_users__malformed_response(
         ("id", "int_parsing", "Input should be a valid integer, unable to parse string as an integer"),
         ("name", "string_type", "Input should be a valid string"),
         ("status", "string_type", "Input should be a valid string"),
-        ("status_code", "enum", "Input should be 1 or 2"),
+        ("status_code", "enum", "Input should be 1, 2, 3, 4 or 5"),
         ("updated_at", "string_type", "Input should be a valid string"),
         ("user_id", "int_parsing", "Input should be a valid integer, unable to parse string as an integer"),
     }
@@ -118,3 +118,54 @@ def test_get_activities_users(
 
     activities_users = holdsport.get_activities_users(activity_id=activity_id)
     assert activities_users == expected_activities_users
+
+
+@pytest.mark.parametrize(
+    ("status_code", "status", "expected_status"),
+    [
+        (1, "Attending", HoldsportActivityUserStatus.ATTENDING),
+        (2, "Not attending", HoldsportActivityUserStatus.NOT_ATTENDING),
+        (3, "Available", HoldsportActivityUserStatus.AVAILABLE),
+        (4, "Selected", HoldsportActivityUserStatus.SELECTED),
+        (5, "Unknown", HoldsportActivityUserStatus.UNKNOWN),
+    ],
+)
+def test_get_activities_users__supported_attendance_statuses(
+    http_mock: HTTPMock,
+    activity_id: int,
+    holdsport: Holdsport,
+    status_code: int,
+    status: str,
+    expected_status: HoldsportActivityUserStatus,
+) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/activities/{activity_id}/activities_users",
+        response=httpx2.Response(
+            status_code=200,
+            json=[
+                {
+                    "id": 1,
+                    "name": "name",
+                    "status": status,
+                    "status_code": status_code,
+                    "updated_at": "updated_at",
+                    "user_id": 1,
+                },
+                {
+                    "id": 2,
+                    "name": "name",
+                    "status": "status",
+                    "status_code": 2,
+                    "updated_at": "updated_at",
+                    "user_id": 2,
+                },
+            ],
+        ),
+    )
+
+    users = holdsport.get_activities_users(activity_id=activity_id)
+    assert len(users) == 2
+    assert users[0].status_code is expected_status
+    assert users[0].status == status
+    assert users[0].model_dump(mode="json")["status_code"] == status_code

@@ -25,7 +25,7 @@
       { "Get activities users" = "basic_examples/get_activities_users.md" },
     ] },
     { "Advanced examples" = [
-      { "Get activity at a specific date" = "advanced_examples/get_activity_at_date.md" },
+      { "Get all activities at a specific date" = "advanced_examples/get_activities_at_date.md" },
       { "Get coaches attending activity" = "advanced_examples/get_coaches_attending_activity.md" },
       { "List late activity cancellations" = "advanced_examples/list_late_activity_cancellations.md" },
       { "List member attendance" = "advanced_examples/list_member_attendance.md" },
