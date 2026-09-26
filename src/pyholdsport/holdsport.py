@@ -138,7 +138,7 @@ class Holdsport:
 
         Args:
             team_id (int): The id of the team.
-            date (str | None): The starting date to query activities from, in YYYY-MM-DD format.
+            date (str | None): The inclusive starting date to query activities from, in YYYY-MM-DD format.
                 If not defined today is used.
             page (int, optional): The page number to query. Defaults to 1. API default is 1.
             per_page (int, optional): The number of activities to query. Defaults to 20.
@@ -167,13 +167,16 @@ class Holdsport:
             activity_id (int): The id of the activity.
 
         Returns:
-            HoldsportActivity | None: The requested activity, or None if the activity is not found.
+            HoldsportActivity | None: The requested activity, or None for HTTP 404 or an empty response.
+                The API may also use HTTP 404 for an activity the user cannot access.
 
         Raises:
-            httpx2.HTTPStatusError: If the request fails.
+            httpx2.HTTPStatusError: If the request fails with a status other than HTTP 404.
         """
         url = f"{self.api_base_url}/teams/{team_id}/activities/{activity_id}"
         response = self._client.get(url, headers=self.headers, auth=self.auth)
+        if response.status_code == httpx2.codes.NOT_FOUND:
+            return None
         response.raise_for_status()
         response_dict = response.json()
         if not response_dict:
@@ -182,6 +185,9 @@ class Holdsport:
 
     def get_activities_users(self, activity_id: int) -> list[HoldsportActivitiesUser]:
         """Return a list of HoldsportActivitiesUser objects for the requested activity.
+
+        This endpoint omits nonresponders that may appear with Unknown status in
+        an activity's embedded `activities_users` list. It is not a complete team roster.
 
         Args:
             activity_id (int): The id of the activity.

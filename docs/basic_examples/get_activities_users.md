@@ -6,4 +6,6 @@ To list the users associated with an activity, use the [`get_activities_users`](
 --8<-- "docs_src/basic_examples/get_activities_users.py"
 ```
 
-Learn more about the [`HoldsportActivityUser`](../reference/models.md#pyholdsport.HoldsportActivitiesUser) object.
+This endpoint returns responses such as `Attending`, `Not attending`, `Available`, and `Selected`. It omits nonresponders that may appear with `Unknown` status in an activity's embedded `activities_users` list. Neither representation should be assumed to be a complete team roster.
+
+Learn more about the [`HoldsportActivitiesUser`](../reference/models.md#pyholdsport.HoldsportActivitiesUser) object.

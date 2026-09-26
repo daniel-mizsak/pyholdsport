@@ -48,13 +48,15 @@ class HoldsportActivity(BaseModel):
     comment: str
     place: str
     pickup_place: str
-    pickup_time: str
+    pickup_time: str = Field(description="Pickup time in HH:MM format, or an empty string if not set")
     status: int
     registration_type: int
     # actions: list  # noqa: ERA001
     # action_path: str  # noqa: ERA001
     # action_method: str  # noqa: ERA001
-    activities_users: list["HoldsportActivitiesUser"]
+    activities_users: list["HoldsportActivitiesUser"] = Field(
+        description="Activity users, including entries with Unknown status; not necessarily a complete team roster"
+    )
     # ride: bool  # noqa: ERA001
     # ride_comment: str  # noqa: ERA001
     # rides: list  # noqa: ERA001
@@ -68,6 +70,9 @@ class HoldsportActivityUserStatus(IntEnum):
 
     ATTENDING = 1
     NOT_ATTENDING = 2
+    AVAILABLE = 3
+    SELECTED = 4
+    UNKNOWN = 5
 
 
 class HoldsportActivitiesUser(BaseModel):
@@ -110,6 +115,6 @@ class HoldsportNote(BaseModel):
 
     # attachment_path: str  # noqa: ERA001
     body: str
-    create_at: str
+    created_at: str
     created_by: str
     title: str

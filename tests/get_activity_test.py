@@ -12,20 +12,24 @@ from pyholdsport import Holdsport, HoldsportActivitiesUser, HoldsportActivity, H
 from tests.http_mock import HTTPMock
 
 
-def test_get_activity__invalid_authentication(
+@pytest.mark.parametrize("status_code", [401, 403, 500])
+def test_get_activity__http_error(
     http_mock: HTTPMock,
     team_id: int,
     activity_id: int,
     holdsport: Holdsport,
+    status_code: int,
 ) -> None:
     http_mock.expect(
         "GET",
         f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}",
-        response=httpx2.Response(status_code=401),
+        response=httpx2.Response(status_code=status_code),
     )
 
-    with pytest.raises(httpx2.HTTPStatusError):
+    with pytest.raises(httpx2.HTTPStatusError) as exception_info:
         holdsport.get_activity(team_id=team_id, activity_id=activity_id)
+
+    assert exception_info.value.response.status_code == status_code
 
 
 def test_get_activity__malformed_response(
@@ -81,19 +85,22 @@ def test_get_activity__malformed_response(
     }
 
 
+@pytest.mark.parametrize(
+    "response",
+    [httpx2.Response(200, json={}), httpx2.Response(404), httpx2.Response(404, text="Not found")],
+    ids=["empty-object", "404-empty", "404-text"],
+)
 def test_get_activity__no_activity(
     http_mock: HTTPMock,
     team_id: int,
     activity_id: int,
     holdsport: Holdsport,
+    response: httpx2.Response,
 ) -> None:
     http_mock.expect(
         "GET",
         f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}",
-        response=httpx2.Response(
-            status_code=200,
-            json={},
-        ),
+        response=response,
     )
 
     activity = holdsport.get_activity(team_id=team_id, activity_id=activity_id)
@@ -119,7 +126,7 @@ def test_get_activity__single_activity(
                 "comment": "comment",
                 "place": "place",
                 "pickup_place": "pickup_place",
-                "pickup_time": "2024-01-01T09:30:00Z",
+                "pickup_time": "09:30",
                 "status": 1,
                 "registration_type": 1,
                 "activities_users": [
@@ -145,7 +152,7 @@ def test_get_activity__single_activity(
         comment="comment",
         place="place",
         pickup_place="pickup_place",
-        pickup_time="2024-01-01T09:30:00Z",
+        pickup_time="09:30",
         status=1,
         registration_type=1,
         activities_users=[
@@ -164,3 +171,49 @@ def test_get_activity__single_activity(
 
     activity = holdsport.get_activity(team_id=team_id, activity_id=activity_id)
     assert activity == expected_activity
+
+
+def test_get_activity__nested_unknown_attendance_status(
+    http_mock: HTTPMock,
+    team_id: int,
+    activity_id: int,
+    holdsport: Holdsport,
+) -> None:
+    http_mock.expect(
+        "GET",
+        f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}",
+        response=httpx2.Response(
+            status_code=200,
+            json={
+                "id": 1,
+                "name": "name",
+                "starttime": "2024-01-01T10:00:00Z",
+                "endtime": "2024-01-01T12:00:00Z",
+                "comment": "comment",
+                "place": "place",
+                "pickup_place": "pickup_place",
+                "pickup_time": "09:30",
+                "status": 1,
+                "registration_type": 1,
+                "activities_users": [
+                    {
+                        "id": 1,
+                        "name": "name",
+                        "status": "Unknown",
+                        "status_code": 5,
+                        "updated_at": "updated_at",
+                        "user_id": 1,
+                    },
+                ],
+                "event_type": "event_type",
+                "event_type_id": 1,
+            },
+        ),
+    )
+
+    activity = holdsport.get_activity(team_id=team_id, activity_id=activity_id)
+    assert activity is not None
+    users = activity.activities_users
+    assert len(users) == 1
+    assert users[0].status_code is HoldsportActivityUserStatus.UNKNOWN
+    assert users[0].status == "Unknown"
