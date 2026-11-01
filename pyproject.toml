@@ -1,6 +1,6 @@
 # Build System
 [build-system]
-  requires = ["uv_build>=0.12,<0.13"]
+  requires = ["uv_build>=0.13,<0.14"]
   build-backend = "uv_build"
 
 # Project Metadata
@@ -21,14 +21,14 @@
 
 [dependency-groups]
   dev = [
-    "coverage==7.16.1",
-    "nox==2026.8.17",
-    "prek==0.5.3",
+    "coverage==7.17.0",
+    "nox==2026.10.20",
+    "prek==0.5.7",
     "pytest==9.1.1",
-    "ruff==0.16.8",
-    "ty==0.0.82",
+    "ruff==0.17.2",
+    "ty==0.0.91",
   ]
-  docs = ["zensical==0.0.62", "mkdocstrings-python==2.0.8"]
+  docs = ["zensical==0.0.72", "mkdocstrings-python==2.0.10"]
 
 # Tools
 # Uv
