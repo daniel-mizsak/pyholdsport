@@ -6,6 +6,6 @@ To get a specific member of a team, use the [`get_member`](../reference/holdspor
 --8<-- "docs_src/basic_examples/get_member.py"
 ```
 
-1. Note, that if the specified member does not exist, the method will return `None`.
+1. Returns `None` if a successful response contains no member data. HTTP errors, including 404, raise `httpx2.HTTPStatusError`.
 
 Learn more about the [`HoldsportMember`](../reference/models.md#pyholdsport.HoldsportMember) object.

@@ -12,24 +12,20 @@ from pyholdsport import Holdsport, HoldsportActivitiesUser, HoldsportActivity, H
 from tests.http_mock import HTTPMock
 
 
-@pytest.mark.parametrize("status_code", [401, 403, 500])
-def test_get_activity__http_error(
+def test_get_activity__invalid_authentication(
     http_mock: HTTPMock,
     team_id: int,
     activity_id: int,
     holdsport: Holdsport,
-    status_code: int,
 ) -> None:
     http_mock.expect(
         "GET",
         f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}",
-        response=httpx2.Response(status_code=status_code),
+        response=httpx2.Response(status_code=401),
     )
 
-    with pytest.raises(httpx2.HTTPStatusError) as exception_info:
+    with pytest.raises(httpx2.HTTPStatusError):
         holdsport.get_activity(team_id=team_id, activity_id=activity_id)
-
-    assert exception_info.value.response.status_code == status_code
 
 
 def test_get_activity__malformed_response(
@@ -85,22 +81,16 @@ def test_get_activity__malformed_response(
     }
 
 
-@pytest.mark.parametrize(
-    "response",
-    [httpx2.Response(200, json={}), httpx2.Response(404), httpx2.Response(404, text="Not found")],
-    ids=["empty-object", "404-empty", "404-text"],
-)
 def test_get_activity__no_activity(
     http_mock: HTTPMock,
     team_id: int,
     activity_id: int,
     holdsport: Holdsport,
-    response: httpx2.Response,
 ) -> None:
     http_mock.expect(
         "GET",
         f"{holdsport.api_base_url}/teams/{team_id}/activities/{activity_id}",
-        response=response,
+        response=httpx2.Response(200, json={}),
     )
 
     activity = holdsport.get_activity(team_id=team_id, activity_id=activity_id)

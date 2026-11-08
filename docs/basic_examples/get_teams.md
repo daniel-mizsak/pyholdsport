@@ -1,6 +1,6 @@
 # Get teams
 
-To list the teams that the user has access to use the [`get_teams`](../reference/holdsport.md#pyholdsport.Holdsport.get_teams) method:
+To list the teams that the user has access to, use the [`get_teams`](../reference/holdsport.md#pyholdsport.Holdsport.get_teams) method:
 
 ```py linenums="1"
 --8<-- "docs_src/basic_examples/get_teams.py"

@@ -55,7 +55,7 @@ class HoldsportActivity(BaseModel):
     # action_path: str  # noqa: ERA001
     # action_method: str  # noqa: ERA001
     activities_users: list["HoldsportActivitiesUser"] = Field(
-        description="Activity users, including entries with Unknown status; not necessarily a complete team roster"
+        description="Activity users include entries with Unknown status. This may not be a complete team roster."
     )
     # ride: bool  # noqa: ERA001
     # ride_comment: str  # noqa: ERA001

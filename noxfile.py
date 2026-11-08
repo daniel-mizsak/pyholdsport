@@ -6,7 +6,7 @@ Copyright (C) 2026 "Daniel Mizsak" <daniel@mizsak.com>
 
 import nox
 
-python_versions = ["3.11", "3.12", "3.13", "3.14"]
+python_versions = ["3.11", "3.12", "3.13", "3.14", "3.15"]
 
 
 @nox.session(python=python_versions, venv_backend="uv")

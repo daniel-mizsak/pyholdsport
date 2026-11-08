@@ -1,11 +1,8 @@
 from pyholdsport import Holdsport, HoldsportMember
 
-with Holdsport(
-    holdsport_username="username",
-    holdsport_password="password",
-) as holdsport:
-    team_id = 123
+team_id = 123
 
+with Holdsport("username", "password") as holdsport:
     members: list[HoldsportMember] = holdsport.get_members(team_id=team_id)
     for member in members:
         print(member)

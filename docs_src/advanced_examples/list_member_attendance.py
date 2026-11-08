@@ -1,82 +1,79 @@
 from collections import Counter
-from datetime import date, datetime
+from datetime import UTC, date, datetime
+from time import sleep
+from zoneinfo import ZoneInfo
 
-from pyholdsport import (
-    Holdsport,
-    HoldsportActivitiesUser,
-    HoldsportActivity,
-    HoldsportActivityUserStatus,
-    HoldsportMember,
-)
+from pyholdsport import Holdsport, HoldsportActivityUserStatus
 
-with Holdsport(
-    holdsport_username="username",
-    holdsport_password="password",
-) as holdsport:
-    team_id = 123
-    activity_name = "Activity Name"
-    since_date = date(2026, 1, 1)
+team_id = 123
+activity_name = "Activity Name"
+start_date = date(2026, 3, 9)
+end_date = date(2026, 3, 14)
+timezone = ZoneInfo("Europe/Copenhagen")
+now = datetime.now(UTC)
 
-    members: list[HoldsportMember] = holdsport.get_members(team_id=team_id)
-    member_ids: set[int] = {member.id for member in members}
+with Holdsport("username", "password") as holdsport:
+    members = holdsport.get_members(team_id=team_id)
+    member_ids = {member.id for member in members}
 
     attendance_counts: Counter[int] = Counter()
     page = 1
     while True:
-        reached_future_activity = False
-        activities: list[HoldsportActivity] = holdsport.get_activities(
+        if page > 1:
+            sleep(1)
+        activities = holdsport.get_activities(
             team_id=team_id,
-            date=since_date.isoformat(),
+            date=start_date.isoformat(),
             page=page,
-            per_page=20,
+            per_page=50,
         )
         if not activities:
             break
 
+        reached_end = False
         for activity in activities:
-            activity_time = datetime.strptime(
-                activity.starttime, "%Y-%m-%dT%H:%M:%S%z"
-            )
-            if activity_time > datetime.now(activity_time.tzinfo):
-                # Assume that once a future activity is reached, all subsequent
-                # activities are also in the future.
-                reached_future_activity = True
+            activity_start = datetime.fromisoformat(activity.starttime)
+            if (
+                activity_start > now
+                or activity_start.astimezone(timezone).date() >= end_date
+            ):
+                # The API returns activities in chronological order.
+                reached_end = True
                 break
 
             if activity.name != activity_name:
                 continue
 
-            activities_users: list[HoldsportActivitiesUser] = (
-                holdsport.get_activities_users(
-                    activity.id,
-                )
+            activities_users = holdsport.get_activities_users(
+                activity_id=activity.id,
             )
             for user in activities_users:
                 if (
-                    user.status_code is HoldsportActivityUserStatus.ATTENDING
-                    and user.user_id in member_ids
+                    user.status_code
+                    is not HoldsportActivityUserStatus.ATTENDING
                 ):
-                    attendance_counts[user.user_id] += 1
+                    continue
+                if user.user_id not in member_ids:
+                    continue
+                attendance_counts[user.user_id] += 1
 
-        if reached_future_activity:
+        if reached_end:
             break
-
         page += 1
 
     print(
-        f"Player attendance for '{activity_name}' "
-        f"since {since_date.isoformat()}:"
+        f"This report counts member attendance responses for '{activity_name}' "
+        f"from {start_date.isoformat()} to {end_date.isoformat()} "
+        "(end date excluded):"
     )
     sorted_members = sorted(
         members,
         key=lambda member: (
-            -attendance_counts[member.id],
+            -1 * attendance_counts[member.id],
             member.lastname,
             member.firstname,
         ),
     )
-    for sorted_member in sorted_members:
-        print(
-            f"{sorted_member.firstname} {sorted_member.lastname}: "
-            f"{attendance_counts[sorted_member.id]}"
-        )
+    for member in sorted_members:
+        member_name = f"{member.firstname} {member.lastname}"
+        print(f"{member_name}: {attendance_counts[member.id]}")

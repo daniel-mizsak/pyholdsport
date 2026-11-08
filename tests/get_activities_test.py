@@ -204,12 +204,12 @@ def test_get_activities__nested_unknown_attendance_status(
 def test_get_activities__query_parameters(http_mock: HTTPMock, team_id: int, holdsport: Holdsport) -> None:
     http_mock.expect(
         "GET",
-        f"{holdsport.api_base_url}/teams/{team_id}/activities?page=3&per_page=100&date=2026-01-01",
+        f"{holdsport.api_base_url}/teams/{team_id}/activities?page=3&per_page=50&date=2026-01-01",
         response=httpx2.Response(status_code=200, json=[]),
     )
 
     holdsport.get_activities(team_id=team_id, page=3, per_page=120, date="2026-01-01")
     request = http_mock.requests[-1]
     assert request.url.params["page"] == "3"
-    assert request.url.params["per_page"] == "100"
+    assert request.url.params["per_page"] == "50"
     assert request.url.params["date"] == "2026-01-01"
