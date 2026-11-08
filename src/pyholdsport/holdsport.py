@@ -114,7 +114,7 @@ class Holdsport:
             member_id (int): The id of the member.
 
         Returns:
-            HoldsportMember | None: The requested member, or None if the member is not found.
+            HoldsportMember | None: The requested member, or None if the API returns no member data.
 
         Raises:
             httpx2.HTTPStatusError: If the request fails.
@@ -142,7 +142,7 @@ class Holdsport:
                 If not defined today is used.
             page (int, optional): The page number to query. Defaults to 1. API default is 1.
             per_page (int, optional): The number of activities to query. Defaults to 20.
-                API default is 20, maximum is 100.
+                API default is 20, maximum is 50.
 
         Returns:
             list[HoldsportActivity]: List of activities in the requested team.
@@ -151,7 +151,7 @@ class Holdsport:
             httpx2.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams/{team_id}/activities"
-        params: dict[str, int | str] = {"page": page, "per_page": min(per_page, 100)}
+        params: dict[str, int | str] = {"page": page, "per_page": min(per_page, 50)}
         if date:
             params["date"] = date
         response = self._client.get(url, headers=self.headers, auth=self.auth, params=params)
@@ -167,16 +167,13 @@ class Holdsport:
             activity_id (int): The id of the activity.
 
         Returns:
-            HoldsportActivity | None: The requested activity, or None for HTTP 404 or an empty response.
-                The API may also use HTTP 404 for an activity the user cannot access.
+            HoldsportActivity | None: The requested activity, or None if the API returns no activity data.
 
         Raises:
-            httpx2.HTTPStatusError: If the request fails with a status other than HTTP 404.
+            httpx2.HTTPStatusError: If the request fails.
         """
         url = f"{self.api_base_url}/teams/{team_id}/activities/{activity_id}"
         response = self._client.get(url, headers=self.headers, auth=self.auth)
-        if response.status_code == httpx2.codes.NOT_FOUND:
-            return None
         response.raise_for_status()
         response_dict = response.json()
         if not response_dict:
