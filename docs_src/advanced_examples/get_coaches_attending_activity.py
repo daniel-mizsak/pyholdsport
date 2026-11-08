@@ -1,57 +1,66 @@
+from datetime import UTC, datetime
+from zoneinfo import ZoneInfo
+
 from pyholdsport import (
     Holdsport,
-    HoldsportActivitiesUser,
-    HoldsportActivity,
     HoldsportActivityUserStatus,
-    HoldsportMember,
     HoldsportRole,
 )
 
-with Holdsport(
-    holdsport_username="username",
-    holdsport_password="password",
-) as holdsport:
-    team_id = 123
-    activity_name = "Activity Name"
+team_id = 123
+activity_name = "Activity Name"
+timezone = ZoneInfo("Europe/Copenhagen")
+coach_roles = {
+    HoldsportRole.COACH,
+    HoldsportRole.ASSISTANT_COACH,
+    HoldsportRole.TEAM_LEADER,
+}
+now = datetime.now(UTC)
 
-    activities: list[HoldsportActivity] = holdsport.get_activities(
-        team_id=team_id,
-        per_page=20,
-    )
+with Holdsport("username", "password") as holdsport:
     activity_id = None
-    for activity in activities:
-        if activity.name == activity_name:
-            activity_id = activity.id
-            print(f"Found activity: '{activity.name}'")
-            print(f"Activity id: {activity_id}")
-            print(f"Activity start time: {activity.starttime}")
-            break
+    # This fetches one page.
+    # Increase per_page or loop over page for more activities.
+    for activity in holdsport.get_activities(
+        team_id=team_id,
+        date=now.astimezone(timezone).date().isoformat(),
+    ):
+        if activity.name != activity_name:
+            continue
+        activity_start = datetime.fromisoformat(activity.starttime)
+        if activity_start <= now:
+            continue
+
+        # The API returns activities in chronological order.
+        activity_id = activity.id
+        activity_start_local = activity_start.astimezone(timezone)
+        activity_start_time = activity_start_local.isoformat()
+        print(f"Activity name: '{activity.name}'")
+        print(f"Activity id: {activity_id}")
+        print(f"Activity start time: {activity_start_time}")
+        break
 
     if activity_id is None:
-        msg = f"Activity with name '{activity_name}' not found."
+        msg = f"Upcoming activity '{activity_name}' was not found."
         raise ValueError(msg)
 
+    members = holdsport.get_members(team_id=team_id)
+    coach_ids = set()
+    for member in members:
+        if member.role in coach_roles:
+            coach_ids.add(member.id)
+
     coaches_attending: list[str] = []
-    activities_users: list[HoldsportActivitiesUser] = (
-        holdsport.get_activities_users(
-            activity_id,
-        )
+    activities_users = holdsport.get_activities_users(
+        activity_id=activity_id,
     )
     for user in activities_users:
-        if user.status_code is HoldsportActivityUserStatus.ATTENDING:
-            # (1)!
-            member: HoldsportMember | None = holdsport.get_member(
-                team_id=team_id,
-                member_id=user.user_id,
-            )
-            if (member is not None) and (
-                member.role
-                in [HoldsportRole.COACH, HoldsportRole.ASSISTANT_COACH]
-            ):
-                coaches_attending.append(
-                    f"{member.firstname} {member.lastname}"
-                )
+        if user.status_code is not HoldsportActivityUserStatus.ATTENDING:
+            continue
+        if user.user_id not in coach_ids:
+            continue
+        coaches_attending.append(user.name)
 
-    print("Coaches attending activity:")
+    print("Coaches, assistant coaches, and team leaders attending:")
     for coach in coaches_attending:
         print(coach)

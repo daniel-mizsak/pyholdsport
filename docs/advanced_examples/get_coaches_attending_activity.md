@@ -1,15 +1,13 @@
 # Get coaches attending activity
 
-In this example, it will be demonstrated how to generate a list of coaches attending a specific activity.
+This example lists coaches, assistants, and team leaders marked as attending the next activity with a given name.
 
-The following logical steps are performed:
+- Search one page from today using [`get_activities`](../reference/holdsport.md#pyholdsport.Holdsport.get_activities), skipping activities that have started.
+- Fetch team members once to identify the relevant roles.
+- Print matching activity users marked as `Attending`.
 
-- Obtain the `activity_id` for the next activity with the specified name.
-- Retrieve the list of `users` attending that activity.
-- Since the role of the user is not included under the activity's information, fetch each user's member details to determine their role.
+The API returns activities in chronological order. The search raises `ValueError` if no match is found in this page. To search beyond the default 20 activities, increase `per_page` (maximum 50) or use [pagination](../basic_examples/get_activities.md#optional-pagination).
 
 ```py linenums="1"
 --8<-- "docs_src/advanced_examples/get_coaches_attending_activity.py"
 ```
-
-1. In practice, if the list of coaches and assistants rarely changes, their member ids could be hard-coded to avoid additional API calls.
