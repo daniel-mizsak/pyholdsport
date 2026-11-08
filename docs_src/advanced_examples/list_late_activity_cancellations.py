@@ -1,50 +1,43 @@
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from pyholdsport import (
     Holdsport,
     HoldsportActivitiesUser,
-    HoldsportActivity,
     HoldsportActivityUserStatus,
 )
 
-with Holdsport(
-    holdsport_username="username",
-    holdsport_password="password",
-) as holdsport:
-    team_id = 123
-    activity_id = 12345
+team_id = 123
+activity_id = 12345
+timezone = ZoneInfo("Europe/Copenhagen")
 
-    activity: HoldsportActivity | None = holdsport.get_activity(
+with Holdsport("username", "password") as holdsport:
+    activity = holdsport.get_activity(
         team_id=team_id,
         activity_id=activity_id,
     )
     if activity is None:
-        msg = f"Activity with id {activity_id} was not found."
+        msg = f"The API returned no data for activity {activity_id}."
         raise ValueError(msg)
 
-    activity_start = datetime.strptime(
-        activity.starttime, "%Y-%m-%dT%H:%M:%S%z"
-    )
+    activity_start = datetime.fromisoformat(activity.starttime)
     cancellation_window_start = activity_start - timedelta(hours=2)
 
-    late_cancellations: list[tuple[HoldsportActivitiesUser, datetime]] = []
-    activities_users: list[HoldsportActivitiesUser] = (
-        holdsport.get_activities_users(
-            activity_id=activity_id,
-        )
+    late_cancellations: list[HoldsportActivitiesUser] = []
+    activities_users = holdsport.get_activities_users(
+        activity_id=activity_id,
     )
     for user in activities_users:
-        signed_off_at = datetime.strptime(
-            user.updated_at, "%Y-%m-%dT%H:%M:%S%z"
-        )
-        if (
-            user.status_code is HoldsportActivityUserStatus.NOT_ATTENDING
-            and cancellation_window_start <= signed_off_at < activity_start
-        ):
-            late_cancellations.append((user, signed_off_at))
+        if user.status_code is not HoldsportActivityUserStatus.NOT_ATTENDING:
+            continue
+        signed_off_at = datetime.fromisoformat(user.updated_at)
+        if cancellation_window_start <= signed_off_at:
+            late_cancellations.append(user)
 
     print(f"Late cancellations for '{activity.name}':")
-    for user, signed_off_at in sorted(
-        late_cancellations, key=lambda entry: (entry[1], entry[0].name)
+    for user in sorted(
+        late_cancellations,
+        key=lambda user: (datetime.fromisoformat(user.updated_at), user.name),
     ):
-        print(f"{user.name}: {signed_off_at.isoformat()}")
+        signed_off_at = datetime.fromisoformat(user.updated_at)
+        print(f"{user.name}: {signed_off_at.astimezone(timezone).isoformat()}")

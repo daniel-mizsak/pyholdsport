@@ -1,13 +1,15 @@
 # List member attendance
 
-In this example, it will be demonstrated how to count how many times each member attended a specific activity since a given date.
+This example counts `Attending` responses for current team members within a date range.
 
-The following logical steps are performed:
+- Fetch the current members, including all roles.
+- Fetch pages with [`get_activities`](../reference/holdsport.md#pyholdsport.Holdsport.get_activities) from `start_date`, stopping on an empty page, at `end_date` (exclusive), or at the first future activity.
+- Count responses for activities with the specified name.
+- Print members by descending count, including zeros.
 
-- Define the `team_id`, `activity_name`, and `since_date` date.
-- Retrieve the team members.
-- Retrieve activities from the `since_date` date and count members marked as `Attending` for matching activities.
-- Print each member with their attendance count.
+The API returns activities in chronological order. Activities in progress count. Former members are excluded. Counts represent responses, not verified attendance.
+
+The example requests 50 activities per page, with a one-second pause between pages. Each matching activity also requires a request for its attendance responses.
 
 ```py linenums="1"
 --8<-- "docs_src/advanced_examples/list_member_attendance.py"

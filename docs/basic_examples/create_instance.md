@@ -1,6 +1,6 @@
-# Create a holdsport instance
+# Create a Holdsport instance
 
-Create a `Holdsport` instance with your **username** and **password**, and use it as a context manager via **with**. [Learn more about http clients here](https://pydantic.dev/docs/httpx2/advanced/clients/){target}.
+Create a `Holdsport` instance with your **username** and **password**, and use it as a context manager via `with`. [Learn more about HTTP clients here](https://pydantic.dev/docs/httpx2/advanced/clients/){target}.
 
 ```py linenums="1"
 --8<-- "docs_src/basic_examples/create_instance_input_arguments.py"
