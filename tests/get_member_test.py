@@ -76,10 +76,7 @@ def test_get_member__no_member(http_mock: HTTPMock, team_id: int, member_id: int
     http_mock.expect(
         "GET",
         f"{holdsport.api_base_url}/teams/{team_id}/members/{member_id}",
-        response=httpx2.Response(
-            status_code=200,
-            json={},
-        ),
+        response=httpx2.Response(status_code=200, json={}),
     )
 
     member = holdsport.get_member(team_id=team_id, member_id=member_id)
